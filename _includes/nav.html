@@ -16,7 +16,7 @@
       <ul class="nav navbar-nav navbar-right">
         {% for category in site.categories %}
           <li>
-            <a href="/contact/">{{ category | first }} ({{ category | last | size }})</a> 
+            <a href="/categories/{{ category | first }}/">{{ category | first }} ({{ category | last | size }})</a> 
           </li>
         {% endfor %}
         <li>

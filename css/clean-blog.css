@@ -408,3 +408,8 @@ body {
   font-size: smaller;
   color: darkgrey;
 }
+.category-notice {
+  text-align: right;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  text-transform: capitalize;
+}
