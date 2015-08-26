@@ -127,6 +127,15 @@ hr.small {
     transform: translate3d(0, 100%, 0);
   }
 }
+.graylayer {
+  content: "";
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+}
 .intro-header {
   background: no-repeat center center;
   background-color: #808080;
@@ -394,4 +403,8 @@ img::-moz-selection {
 }
 body {
   webkit-tap-highlight-color: #0085a1;
+}
+.footnotes {
+  font-size: smaller;
+  color: darkgrey;
 }
