@@ -14,11 +14,6 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav navbar-right">
-        {% for category in site.categories %}
-          <li>
-            <a href="/categories/{{ category | first }}/">{{ category | first }} ({{ category | last | size }})</a> 
-          </li>
-        {% endfor %}
         <li>
           <a href="/about/">about</a>
         </li>

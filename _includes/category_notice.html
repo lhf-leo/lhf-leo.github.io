@@ -1,1 +1,10 @@
-<div class="category-notice">Category: {% if page.category %}{{ page.category }}{% else %}{{"all"}}{% endif %}</div>
+<div class="category-notice"> 
+  <label for="category-sel">Category:</label>
+  <select class="form-control" id="category-sel">
+    <option value="all">All</option>
+    {% for category in site.categories %}
+    <option value="{{ category | first }}" {% if page.category == category.first %}selected="selected"{% endif %}>{{ category | first }}</option>
+    {% endfor %}
+  </select>
+</div>
+<hr>

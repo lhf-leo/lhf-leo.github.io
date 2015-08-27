@@ -3,7 +3,7 @@ layout: page
 title: "Less Hypothesis"
 description: "Has anything you've done made your life better?"
 ---
-
+{% include category_notice.html %}
 {% for post in paginator.posts %}
 <div class="post-preview">
     <a href="{{ post.url | prepend: site.baseurl }}">
