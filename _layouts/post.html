@@ -1,5 +1,6 @@
 --- 
 layout: default 
+comments: true
 ---
 
 <!-- Post Header -->
@@ -24,7 +25,6 @@ layout: default
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         {{ content }}
-        <hr>
         <ul class="pager">
           {% if page.previous.url %}
           <li class="previous">
@@ -36,8 +36,27 @@ layout: default
           </li>
           {% endif %}
         </ul>
+        <hr>
+        <div id="disqus_thread"></div>
       </div>
+
     </div>
   </div>
 </article>
 <hr>
+{% if page.comments %}
+
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    // Required: on line below, replace text in quotes with your forum shortname
+    var disqus_shortname = 'hanfuspace';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+{% endif %}
