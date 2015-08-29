@@ -1,7 +1,6 @@
 ---
 title: "Markdown helper from Mou"
 subtitle: "Cheat sheet for markdown"
-date: 2015-08-20 00:10:00
 ---
 # Mou
 
