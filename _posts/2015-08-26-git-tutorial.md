@@ -14,7 +14,8 @@ Git 保存数据是对文件系统的一组快照。 每次你提交更新时，
 
 ### 三个工作区域
 Git 有三个区域：工作目录（Working Directory），暂存目录（Stage or Index），仓库（Git directory）。
-基本的 Git 工作流程如下：  
+基本的 Git 工作流程如下：
+ 
 1. 在工作目录中修改文件。  
 2. 暂存文件，将文件的快照放入暂存区域。  
 3. 提交更新，找到暂存区域的文件，将快照永久性存储到 Git 仓库目录。  
@@ -37,19 +38,20 @@ Git 有三个区域：工作目录（Working Directory），暂存目录（Stage
 
 ![img](https://marklodato.github.io/visual-git-guide/basic-usage.svg "title")  
 上面的四条命令在工作目录、暂存目录(也叫做索引)和仓库之间复制文件。
-* `git add files` 把当前文件放入暂存区域。  
-* `git commit` 给暂存区域生成快照并提交。
-* `git reset -- files` 用来撤销最后一次`git add files`，你也可以用`git reset` 撤销所有暂存区域文件。
-* `git checkout -- files` 把文件从暂存区域复制到工作目录，用来丢弃本地修改。  
+
+*  `git add files` 把当前文件放入暂存区域。  
+*  `git commit` 给暂存区域生成快照并提交。
+*  `git reset -- files` 用来撤销最后一次`git add files`，你也可以用`git reset` 撤销所有暂存区域文件。
+*  `git checkout -- files` 把文件从暂存区域复制到工作目录，用来丢弃本地修改。  
 
 你可以用 `git reset -p`, `git checkout -p`, or `git add -p`进入交互模式。
 
 也可以跳过暂存区域直接从仓库取出文件或者直接提交代码。  
 ![img](https://marklodato.github.io/visual-git-guide/basic-usage-2.svg "title")
    
-* `git commit -a` 相当于运行 `git add` 把所有当前目录下的文件加入暂存区域再运行。  
-* `git commit files` 进行一次包含最后一次提交加上工作目录中文件快照的提交。并且文件被添加到暂存区域。  
-* `git checkout HEAD -- files` 回滚到复制最后一次提交。  
+*  `git commit -a` 相当于运行 `git add` 把所有当前目录下的文件加入暂存区域再运行。  
+*  `git commit files` 进行一次包含最后一次提交加上工作目录中文件快照的提交。并且文件被添加到暂存区域。  
+*  `git checkout HEAD -- files` 回滚到复制最后一次提交。  
 
 ### diff  
 ![img](https://marklodato.github.io/visual-git-guide/diff.svg "title")
@@ -64,4 +66,4 @@ Git 有三个区域：工作目录（Working Directory），暂存目录（Stage
 **_该做法尽量避免。_**如果既没有指定文件名，也没有指定分支名，而是一个标签、远程分支、SHA-1值或者是像master~3类似的东西，就得到一个匿名分支，称作detached HEAD（被分离的HEAD标识）。这样可以很方便地在历史版本之间互相切换。比如说你想要编译1.6.6.1版本的git，你可以运行git checkout v1.6.6.1（这是一个标签，而非分支名），编译，安装，然后切换回另一个分支，比如说git checkout master。  
 ![img](https://marklodato.github.io/visual-git-guide/checkout-detached.svg "title")  
 
-到这里，你已经掌握了基本的本地Git的日常用法。但是现在的工作在多数情况下，处理[分支（branch）](http://hanfu.space/learning/2015/10/26/git-tutorial-2/)和[远程 Git 仓库]()的情况是不可或缺的，将在接下来的文章中详细介绍。
+到这里，你已经掌握了基本的本地Git的日常用法。但是现在的工作在多数情况下，处理[分支（branch）](http://hanfu.space/learning/2015/10/26/git-tutorial-2/)和[远程 Git 仓库](http://hanfu.space/learning/2015/10/27/git-tutorial-3/)的情况是不可或缺的，将在接下来的文章中详细介绍。
