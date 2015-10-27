@@ -37,25 +37,25 @@ Git 有三个区域：工作目录（Working Directory），暂存目录（Stage
 
 ![img](https://marklodato.github.io/visual-git-guide/basic-usage.svg "title")  
 上面的四条命令在工作目录、暂存目录(也叫做索引)和仓库之间复制文件。
-* git add files 把当前文件放入暂存区域。  
-* git commit 给暂存区域生成快照并提交。
-* git reset -- files 用来撤销最后一次git add files，你也可以用git reset 撤销所有暂存区域文件。
-* git checkout -- files 把文件从暂存区域复制到工作目录，用来丢弃本地修改。  
+* `git add files` 把当前文件放入暂存区域。  
+* `git commit` 给暂存区域生成快照并提交。
+* `git reset -- files` 用来撤销最后一次`git add files`，你也可以用`git reset` 撤销所有暂存区域文件。
+* `git checkout -- files` 把文件从暂存区域复制到工作目录，用来丢弃本地修改。  
 
-你可以用 git reset -p, git checkout -p, or git add -p进入交互模式。
+你可以用 `git reset -p`, `git checkout -p`, or `git add -p`进入交互模式。
 
 也可以跳过暂存区域直接从仓库取出文件或者直接提交代码。  
 ![img](https://marklodato.github.io/visual-git-guide/basic-usage-2.svg "title")
    
-* git commit -a 相当于运行 git add 把所有当前目录下的文件加入暂存区域再运行。  
-* git commit files 进行一次包含最后一次提交加上工作目录中文件快照的提交。并且文件被添加到暂存区域。  
-* git checkout HEAD -- files 回滚到复制最后一次提交。  
+* `git commit -a` 相当于运行 `git add` 把所有当前目录下的文件加入暂存区域再运行。  
+* `git commit files` 进行一次包含最后一次提交加上工作目录中文件快照的提交。并且文件被添加到暂存区域。  
+* `git checkout HEAD -- files` 回滚到复制最后一次提交。  
 
 ### diff  
 ![img](https://marklodato.github.io/visual-git-guide/diff.svg "title")
 
 ### checkout
-checkout命令用于从历史提交（或者暂存区域）中拷贝文件到工作目录，也可用于切换分支。
+`checkout`命令用于从历史提交（或者暂存区域）中拷贝文件到工作目录，也可用于切换分支。
 
 当给定某个文件名（或者打开-p选项，或者文件名和-p选项同时打开）时，git会从指定的提交中拷贝文件到暂存区域和工作目录。比如，git checkout HEAD~ foo.c会将提交节点HEAD~(即当前提交节点的父节点)中的foo.c复制到工作目录并且加到暂存区域中。（如果命令中没有指定提交节点，则会从暂存区域中拷贝内容。）注意当前分支不会发生变化。  
 ![img](https://marklodato.github.io/visual-git-guide/checkout-files.svg "title")  
