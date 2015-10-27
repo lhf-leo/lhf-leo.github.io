@@ -64,4 +64,4 @@ Git 有三个区域：工作目录（Working Directory），暂存目录（Stage
 **_该做法尽量避免。_**如果既没有指定文件名，也没有指定分支名，而是一个标签、远程分支、SHA-1值或者是像master~3类似的东西，就得到一个匿名分支，称作detached HEAD（被分离的HEAD标识）。这样可以很方便地在历史版本之间互相切换。比如说你想要编译1.6.6.1版本的git，你可以运行git checkout v1.6.6.1（这是一个标签，而非分支名），编译，安装，然后切换回另一个分支，比如说git checkout master。  
 ![img](https://marklodato.github.io/visual-git-guide/checkout-detached.svg "title")  
 
-到这里，你已经掌握了基本的本地Git的日常用法。但是现在的工作在多数情况下，处理[分支（branch）]()和[远程 Git 仓库]()的情况是不可或缺的，将在接下来的文章中详细介绍。
+到这里，你已经掌握了基本的本地Git的日常用法。但是现在的工作在多数情况下，处理[分支（branch）](http://hanfu.space/learning/2015/10/26/git-tutorial-2/)和[远程 Git 仓库]()的情况是不可或缺的，将在接下来的文章中详细介绍。
