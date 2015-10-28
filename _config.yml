@@ -8,6 +8,7 @@ twitter_username: lhf_leo
 github_username: lhf-leo
 facebook_username:  lhf.leo
 host: localhost
+gems: [jekyll-paginate]
 
 # Build settings
 markdown: kramdown
