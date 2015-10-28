@@ -7,6 +7,7 @@ url: "http://hanfu.space"
 twitter_username: lhf_leo
 github_username: lhf-leo
 facebook_username:  lhf.leo
+host: localhost
 
 # Build settings
 markdown: kramdown
