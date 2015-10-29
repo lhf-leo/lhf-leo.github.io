@@ -104,12 +104,12 @@ Jekyll是一个为生成静态博客非常快速且优雅的工具, [官方网�
 ##Tips
 附加讲讲我在搭建这个环境是碰到的问题, 如果你已经顺利push并被自动build, 可以忽略这一节.
 
-1. 如果出现不能识别gist liquid, 需要在AWS中安装jekyll-gist gem, 并在jekyll配置文件里注明.
+*  如果出现不能识别gist liquid, 需要在AWS中安装jekyll-gist gem, 并在jekyll配置文件里注明.
 {% highlight bash %}
     gems: [jekyll-gist]
 {% endhighlight %}
-2. 如果highlighter使用的是pygments, 需要在AWS中安装pygment.rb gem, 这个gem名字的后缀让我刚开始转了很多弯. 还要确保系统中安装了pygments:
+*  如果highlighter使用的是pygments, 需要在AWS中安装pygment.rb gem, 这个gem名字的后缀让我刚开始转了很多弯. 还要确保系统中安装了pygments:
 {% highlight bash %}
     sudo apt-get install python-pygments
 {% endhighlight %}
-3. 注意Git分支!(这条是写给我自己看的, 可以忽略) 我之前用Github Page存管博客. 为了使用其他插件(Github只支持少量插件), 我采取的方法是将本地编译之后的代码上传到remote的master(Github 默认显示master). 使得我在本地的默认分支不是master, 而是我放置源代码的source分支. 当我在本地不小心使用了`git checkout`之后, 自己彻底凌乱了...
+*  注意Git分支!(这条是写给我自己看的, 可以忽略) 我之前用Github Page存管博客. 为了使用其他插件(Github只支持少量插件), 我采取的方法是将本地编译之后的代码上传到remote的master(Github 默认显示master). 使得我在本地的默认分支不是master, 而是我放置源代码的source分支. 当我在本地不小心使用了`git checkout`之后, 自己彻底凌乱了...
