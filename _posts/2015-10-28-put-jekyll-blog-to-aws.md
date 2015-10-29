@@ -65,7 +65,6 @@ Jekyll是一个为生成静态博客非常快速且优雅的工具, [官方网�
     mkdir myblog.git && cd myblog.git
     git init --bare
     
-
 ####创建Post-receive Hook  
 接下来需要做的是创建Hook. 每次`push`到远程仓库时, Git都会执行一个叫作post-receive的shell脚本, 这里需要创建它:
 
@@ -89,7 +88,6 @@ Jekyll是一个为生成静态博客非常快速且优雅的工具, [官方网�
 
     chmod +x post-receive
 
-
 ####本地连接Remote
 回到本地, 添加刚刚创建的bare远程仓库到remote, 为了方便命名为origin, 可以按需修改:
 
@@ -103,7 +101,7 @@ Jekyll是一个为生成静态博客非常快速且优雅的工具, [官方网�
 
     git push origin master
 
-####Tips
+##Tips
 附加讲讲我在搭建这个环境是碰到的问题, 如果你已经顺利push并被自动build, 可以忽略这一节.
 
 1. 如果出现不能识别gist liquid, 需要在AWS中安装jekyll-gist gem, 并在jekyll配置文件里注明.
