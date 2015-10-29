@@ -3,10 +3,10 @@ title: "Git初学者(三)"
 subtitle: "Git远程操作"
 ---
 本文大量参考了 阮一峰 的 [Git远程操作详解](http://www.ruanyifeng.com/blog/2014/06/git_remote.html) 。
-<!--more-->
 
-相比前文 [Git基本用法](http://hanfu.space/learning/2015/08/26/git-tutorial/) 提到的本地操作，远程操作仅仅多出一个工作区域，即远程仓库（Remote）。详见下图：
+相比前文 [Git基本用法](http://hanfu.space/learning/2015/08/26/git-tutorial/) 提到的本地操作，远程操作仅仅多出一个工作区域，即远程仓库（Remote）。<!--more-->详见下图：
 ![img](http://image.beekka.com/blog/2014/bg2014061202.jpg "general-view") 
+
 
 ## git remote
 一个本地仓库可以和多个远程仓库交流。为了便于管理，Git要求每个远程主机都必须指定一个主机名。`git remote`就用于管理主机名。

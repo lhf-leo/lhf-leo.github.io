@@ -232,6 +232,18 @@ hr.small {
   font-weight: 300;
   margin-bottom: 10px;
 }
+.post-preview > .post-excerpt {
+  color: #808080;
+  font-size: 18px;
+  margin-top: 0;
+}
+.post-preview > .post-excerpt > a {
+  color: #808080;
+}
+.post-preview > .post-excerpt > a:hover,
+.post-preview > .post-excerpt > a:focus {
+  color: #0085a1;
+}
 .post-preview > .post-meta {
   color: #808080;
   font-size: 18px;
@@ -240,7 +252,7 @@ hr.small {
 }
 .post-preview > .post-meta > a {
   text-decoration: none;
-  color: #404040;
+  color: #808080;
 }
 .post-preview > .post-meta > a:hover,
 .post-preview > .post-meta > a:focus {

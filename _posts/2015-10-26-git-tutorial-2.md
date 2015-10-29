@@ -2,7 +2,7 @@
 title: "Git初学者(二)"
 subtitle: "Git分支"
 ---
-出于实用的考虑，本文略过 Git 实现分支的原理，如有兴趣可以参考 [Pro Git](https://git-scm.com/book/zh/v2/Git-%E5%88%86%E6%94%AF-%E5%88%86%E6%94%AF%E7%AE%80%E4%BB%8B) 的描述。
+出于实用的考虑，本文略过 Git 实现分支的原理， 仅讨论日常用法。如有兴趣可以参考 [Pro Git](https://git-scm.com/book/zh/v2/Git-%E5%88%86%E6%94%AF-%E5%88%86%E6%94%AF%E7%AE%80%E4%BB%8B) 的描述。
 <!--more-->
 
 ## 创建分支

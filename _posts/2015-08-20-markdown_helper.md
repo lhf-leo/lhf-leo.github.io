@@ -1,6 +1,7 @@
 ---
 title: "Markdown helper from Mou"
 subtitle: "Cheat sheet for markdown"
+excerpt: false
 ---
 {% gist lhf-leo/04ace022699e375291fb %}
 
@@ -9,7 +10,6 @@ subtitle: "Cheat sheet for markdown"
 ## Overview
 
 **Mou**, the missing Markdown editor for *web developers*.
-<!--more-->
 
 ### Syntax
 
