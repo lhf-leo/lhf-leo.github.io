@@ -15,7 +15,7 @@ gems: [jekyll-paginate, jekyll-gist]
 markdown: kramdown
 highlighter: pygments
 permalink: pretty
-paginate: 5
+paginate: 10
 exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
 
 #Default post settings
