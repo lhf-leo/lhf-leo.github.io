@@ -15,6 +15,9 @@ description: "Has anything you've done made your life better?"
         </h3>
         {% endif %}
     </a>
+    {% if post.show_excerpt %}
+    <p class="post-excerpt">{{ post.excerpt | remove: '<p>' | remove: '</p>' }}</p>
+    {% endif %}
     <p class="post-meta">Posted by <b>{% if post.author %}{{ post.author }}{% else %}{{ site.title }}{% endif %}</b> on {{ post.date | date: "%B %-d, %Y" }}</p>
 </div>
 <hr>

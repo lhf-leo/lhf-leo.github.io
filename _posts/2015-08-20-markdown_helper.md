@@ -1,9 +1,14 @@
 ---
-author: "Not Me!"
-title: "Markdown helper from Mou"
-subtitle: "Cheat sheet for markdown"
-excerpt: false
+author: Not Me!
+title: Markdown helper from Mou
+subtitle: Cheat sheet for markdown
+category: Others
+show_excerpt: false
+comments: false
 ---
+This is just Markdown diction.
+<!--more-->
+
 {% gist lhf-leo/04ace022699e375291fb %}
 
 ![Mou icon](http://25.io/mou/Mou_128.png)

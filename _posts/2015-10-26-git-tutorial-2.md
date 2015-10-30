@@ -47,7 +47,7 @@ index.html |    1 +
 Git 将此次合并的结果做了一个新的快照并且让master指向它。这里有一个特殊情况就是当master所指的快照是分支的父节点，那么merge操作将会直接移动master指针到分支指针的位置。
 ![img](https://git-scm.com/book/en/v2/book/03-git-branching/images/basic-merging-2.png "basic-merging-2") 
 如果没有任何冲突，那么合并到这里就结束了。但大部分情况，代码往往不能简单的自动合并，比如两个分支均修改了同一个变量。任何因包含合并冲突而有待解决的文件，都会以未合并状态标识出来。Git 会在有冲突的文件中加入标准的冲突解决标记，这样你可以打开这些包含冲突的文件然后手动解决冲突。出现冲突的文件会包含一些特殊区段，看起来像下面这个样子：
-{% highlight bash %}
+{% highlight html %}
 <<<<<<< HEAD:index.html
 <div id="footer">contact : email.support@github.com</div>
 =======

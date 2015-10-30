@@ -44,7 +44,7 @@ layout: default
   </div>
 </article>
 <hr>
-
+{% if page.comments %}
 <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     // Required: on line below, replace text in quotes with your forum shortname
@@ -58,4 +58,4 @@ layout: default
     })();
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
-
+{% endif %}

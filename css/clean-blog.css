@@ -1,5 +1,6 @@
 body {
-  font-family: 'Lora', 'Times New Roman', serif;
+  font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+  #font-family: 'Lora', 'Times New Roman', serif;
   font-size: 20px;
   color: #404040;
 }
@@ -231,6 +232,21 @@ hr.small {
   margin: 0;
   font-weight: 300;
   margin-bottom: 10px;
+}
+.post-preview > .post-tag {
+  color: #808080;
+  font-size: 18px;
+  margin: 0;
+}
+.post-preview > .post-tag > .tag {
+  color: #808080;
+  font-size: 18px;
+  font-style: italic;
+  border: 2px solid #808080;
+  border-bottom-left-radius: 20px;
+  border-top-left-radius: 20px;
+  margin: 0;
+  padding: 0px 8px 0px 3px;
 }
 .post-preview > .post-excerpt {
   color: #808080;

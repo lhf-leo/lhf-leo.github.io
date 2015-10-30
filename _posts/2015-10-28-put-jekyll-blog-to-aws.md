@@ -1,6 +1,7 @@
 ---
 title: "在AWS上搭建Jekyll博客"
 subtitle: "利用Github Post Receive Hook同步"
+tags: [Jekyll, AWS]
 ---
 Jekyll是一个为生成静态博客非常快速且优雅的工具, [官方网站](http://jekyllrb.com/ "jekyll")资料详实, 有需要可以去学习一下, 本文会涉及它的基本应用, 但不会深入讨论日常用法. AWS是一个Amazon推出的强大的云服务, 可以被用作VPS. 本文主要讨论如何通过 Github Post Receive 实现本地与 AWS EC2 实例自动同步. 你需要确保已安装git和jekyll在你的机器上. 
 <!--more-->
@@ -31,7 +32,8 @@ Jekyll是一个为生成静态博客非常快速且优雅的工具, [官方网�
 创建一个AWS帐号, 按照默认设置初始化一个EC2实例. 我选择的是系统是Ubuntu, 因为比较熟悉. 不用多久, 将会获得一个Pem文件, 需要妥善保管, 这是登陆实例的唯一凭证. 还可以通过管理面板找到该实例的IP地址. 现在就可以通过SSH连接:
 
     ssh -i younameit.pem ubuntu@xxx.xxx.xxx.xxx
-    
+
+
 ####配置Apache
 ```AWS默认只打开了ssh的22接口, 所以需要首先在AWS的控制面板中开放80接口.```
 
@@ -66,6 +68,7 @@ Jekyll是一个为生成静态博客非常快速且优雅的工具, [官方网�
     mkdir myblog.git && cd myblog.git
     git init --bare
     
+
 ####创建Post-receive Hook  
 接下来需要做的是创建Hook. 每次`push`到远程仓库时, Git都会执行一个叫作post-receive的shell脚本, 这里需要创建它:
 
@@ -89,6 +92,7 @@ Jekyll是一个为生成静态博客非常快速且优雅的工具, [官方网�
 
     chmod +x post-receive
 
+
 ####本地连接Remote
 回到本地, 添加刚刚创建的bare远程仓库到remote, 为了方便命名为origin, 可以按需修改:
 
@@ -105,12 +109,10 @@ Jekyll是一个为生成静态博客非常快速且优雅的工具, [官方网�
 ##Tips
 附加讲讲我在搭建这个环境是碰到的问题, 如果你已经顺利push并被自动build, 可以忽略这一节.
 
-*  如果出现不能识别gist liquid, 需要在AWS中安装jekyll-gist gem, 并在jekyll配置文件里注明.
-{% highlight bash %}
+1. 如果出现不能识别gist liquid, 需要在AWS中安装jekyll-gist gem, 并在jekyll配置文件里注明.
     gems: [jekyll-gist]
-{% endhighlight %}
-*  如果highlighter使用的是pygments, 需要在AWS中安装pygment.rb gem, 这个gem名字的后缀让我刚开始转了很多弯. 还要确保系统中安装了pygments:
-{% highlight bash %}
+    
+2. 如果highlighter使用的是pygments, 需要在AWS中安装pygment.rb gem, 这个gem名字的后缀让我刚开始转了很多弯. 还要确保系统中安装了pygments:
     sudo apt-get install python-pygments
-{% endhighlight %}
-*  注意Git分支!(这条是写给我自己看的, 可以忽略) 我之前用Github Page存管博客. 为了使用其他插件(Github只支持少量插件), 我采取的方法是将本地编译之后的代码上传到remote的master(Github 默认显示master). 使得我在本地的默认分支不是master, 而是我放置源代码的source分支. 当我在本地不小心使用了`git checkout`之后, 自己彻底凌乱了...
+    
+3. 注意Git分支!(这条是写给我自己看的, 可以忽略) 我之前用Github Page存管博客. 为了使用其他插件(Github只支持少量插件), 我采取的方法是将本地编译之后的代码上传到remote的master(Github 默认显示master). 使得我在本地的默认分支不是master, 而是我放置源代码的source分支. 当我在本地不小心使用了`git checkout`之后, 自己彻底凌乱了...

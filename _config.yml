@@ -27,4 +27,8 @@ defaults:
       type: "posts" 
     values:
       layout: post
-      categories: Learning
+      category: Learning
+      tags: false
+      show_excerpt: true
+      comments: true
+
