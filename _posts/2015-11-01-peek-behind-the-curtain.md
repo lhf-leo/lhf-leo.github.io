@@ -133,6 +133,6 @@ Sinatra也可以在不用顶级DSL的情况下使用，只需要sinatra/base和�
 
 > 提示
 > 
-> base.rb现在的开发版本可以在里找到 https://github.com/sinatra/sinatra/blob/master/lib/sinatra/base.rb. 
+> base.rb现在的开发版本可以在[这里](https://github.com/sinatra/sinatra/blob/master/lib/sinatra/base.rb "sinatra code")找到。
 
 
