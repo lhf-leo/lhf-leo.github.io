@@ -1,12 +1,12 @@
 ---
 title: Sinatra 实现原理(一)
-subtitle: Application and Delegation
+subtitle: Application 和 Delegation
 tags: [翻译, Sinatra]
-show_excerpt: false
 ---
-翻译来自 *Sinatra: Up and Running*
+翻译来自 *Sinatra: Up and Running*。
 
-```在阅读这个专题之前，你应该已经对Sinatra的classic用法风格比较熟悉了。```现在我们更加深入地探讨一下Sinatra是如何运行的。一旦你了解其后台的原理，那么，充分利用可用的API甚至是拓展它就变得非常容易了。为了达到这个目标，我们会研究Sinatra的源代码，由我带你看看到底发生了什么。
+```在阅读这个专题之前，你应该已经对Sinatra的classic用法风格比较熟悉了。```现在我们更加深入地探讨一下Sinatra是如何运行的。一旦你了解其后台的原理，那么，充分利用可用的API甚至是拓展它就变得非常容易了。为了达到这个目标，我们会研究Sinatra的源代码，看看到底发生了什么。
+<!--more-->
 
 > 提示
 > 
