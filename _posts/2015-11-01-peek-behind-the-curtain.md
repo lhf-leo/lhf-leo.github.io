@@ -12,7 +12,7 @@ show_excerpt: false
 > 
 > Sinatra遵循语义化版本规则，即它一直向下兼容除非主版本升级（版本的第一个数字变大）。因此，在Sinatra 1.2.3下写的程序，也可以运行在1.3.0的版本中。语义化版本控制要求一个官方且全面的API使用规范，在Sinatra里就是README，你可以在[这里](http://www.sinatrarb.com/intro "README")找到。 你可以在[这里](http://semver.org/ "Semantic Versioning")了解更多有关语义化版本。
 
-##Application 与 Delegation
+#Application 与 Delegation
 
 让我们从一个小实验开始。我们应该已经知道网页的参数是通过一个叫params的哈希表传递给routes，并被routes使用。简单的例子就是登录表单一般都会有params[:username] 和 params[:password]。
 
@@ -33,7 +33,7 @@ ruby-1.9.2-p0 > defined? params
 
 如上所示，params只是在get里面才可见。这也揭示了Sinatra运作的秘密就是它处理self变量的方式。
 
-####内部的Self
+###内部的Self
 
 在Ruby里，没被赋给变量或常量的函数调用，都传给了self。一般来说为了简洁，self都被隐藏了。在例子3-2中，我们调用jobs和self.jobs；输出相同是因为这些调用发生在用一个作用域里面，因而self也是相同的。
 
@@ -74,7 +74,7 @@ end
 >
 > 同样值得注意的是外部作用域是main，前面在调用jobs和self.jobs时也一样。
 
-####“get”是哪来的?
+###“get”是哪来的?
 
 现在我们知道routes是把block传递给一个Sinatra::Application的实例处理。那么，route方法到底在哪里实现的呢？我们打开IRB，用Ruby reflection API来大致了解一下例子3-4中展示的类的结构。
 
@@ -124,7 +124,7 @@ ruby-1.9.2-p180 > Sinatra::Application.run!
 >> Listening on 0.0.0.0:4567, CTRL+C to stop
 {% endhighlight %}
 
-####探索实现方法
+###探索实现方法
 
 ```书上前面内容在介绍了使用顶级DSL的classic风格Sinatra，如果有必要你可以简单从官方文档学习，本文不再赘述。这里讲的是modular style。```  
 Sinatra也可以在不用顶级DSL的情况下使用，只需要sinatra/base和一点mixin结构的知识。也意味着顶级DSL不是必须的。

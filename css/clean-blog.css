@@ -208,8 +208,17 @@ hr.small {
   margin: 10px 0 30px;
   font-weight: 600;
 }
+.intro-header .post-heading > .post-tag > .tag {
+  font-size: 18px;
+  font-style: italic;
+  border: 2px solid white;
+  border-bottom-left-radius: 20px;
+  border-top-left-radius: 20px;
+  margin: 0;
+  padding: 0px 8px 0px 3px;
+}
 .intro-header .post-heading .meta {
-  font-family: 'Lora', 'Times New Roman', serif;
+  /*font-family: 'Lora', 'Times New Roman', serif;*/
   font-style: italic;
   font-weight: 300;
   font-size: 20px;
