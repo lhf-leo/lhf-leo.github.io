@@ -5,6 +5,9 @@ header-img: img/home-bg.jpg
 email: hanfuliao@gmail.com
 description: "I Leo, I learn and I love."
 url: "http://hanfu.space"
+
+permalink: /:year/:month/:day/:title.html
+
 twitter_username: lhf_leo
 github_username: lhf-leo
 facebook_username:  lhf.leo
