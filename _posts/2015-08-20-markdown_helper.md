@@ -2,7 +2,7 @@
 author: Not Me!
 title: Markdown helper from Mou
 subtitle: Cheat sheet for markdown
-category: Others
+category: 其他
 show_excerpt: false
 comments: false
 ---

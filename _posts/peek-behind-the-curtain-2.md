@@ -1,9 +1,10 @@
 ---
 title: Sinatra 实现原理(二)
-subtitle: Helpers and Extensions
+subtitle: Helpers 和 Extensions
 tags: [翻译, Sinatra]
+show_excerpt: false
 ---
-翻译来自 ＊Sinatra: Up and Running＊
+翻译来自 *Sinatra: Up and Running*
 
 ##Helpers and Extensions
 

@@ -1,7 +1,7 @@
 <div class="category-notice"> 
   <label for="category-sel">Category:</label>
   <select class="form-control" id="category-sel">
-    <option value="all">All</option>
+    <option value="all">全部</option>
     {% for category in site.categories %}
     <option value="{{ category | first }}" {% if page.category == category.first %}selected="selected"{% endif %}>{{ category | first }}</option>
     {% endfor %}

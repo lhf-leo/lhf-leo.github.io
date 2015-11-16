@@ -30,7 +30,7 @@ defaults:
       type: "posts" 
     values:
       layout: post
-      category: Learning
+      category: 技术
       tags: false
       show_excerpt: true
       comments: true
