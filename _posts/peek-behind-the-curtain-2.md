@@ -6,7 +6,7 @@ show_excerpt: false
 ---
 翻译来自 *Sinatra: Up and Running*
 
-##Helpers and Extensions
+##Helpers 和 Extensions
 
 Now we’ve armed ourselves with enough knowledge to be a little dangerous with Sinatra. We know now that we don’t have to rely on the DSL, but can engage Sinatra in a completely modular fashion. This begs the question of what we stand to gain by doing so. After all, the DSL is capable and convenient out of the box. What if, however, we want to do something that Sinatra’s DSL doesn’t natively allow?
 
