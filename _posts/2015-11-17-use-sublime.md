@@ -8,6 +8,7 @@ tags: [搭建环境, 软件]
 ![afterglow icon](https://raw.githubusercontent.com/YabataDesign/sublime-text-icon/master/Sublime_text_256x256x32.png "afterglow")
 <!--more-->
 ##安装
+
 在Windows，OS X 和 Ubuntu上安装sublime都非常方便，这里主要介绍一下CentOS的安装方法。
 首先，去[Sublime网站](http://www.sublimetext.com/3)下载64位或32位*tarball*，或者直接使用`wget`命令下载：
 {% highlight bash %}
