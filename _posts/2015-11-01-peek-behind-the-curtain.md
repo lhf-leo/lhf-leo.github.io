@@ -51,7 +51,7 @@ ruby-1.9.2-p0 > self.jobs
 例子3-3展示了如何得到self从Sinatra routes内部和外部检测的结果；在Figure3-1可以看到结果。
 
 <sub>Example 3-3. 检测不同作用域下的self</sub>
-{% highlight bash %}
+{% highlight ruby %}
 require "sinatra"
 
 outer_self = self

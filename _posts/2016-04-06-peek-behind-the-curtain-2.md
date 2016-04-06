@@ -14,13 +14,13 @@ tags: [翻译, Sinatra]
 
 > 提示
 > 
-> When creating extension and helper methods, it’s considered a best practice to wrap those in a module and use the register method to let Sinatra figure out where to use those modules as mixins. Be kind to your fellow Sinatra developers!
+> 当创建extension 和 helper时，best practice是把它们打包在一个module里面并用register方法让Sinatra决定在哪用这些modules作为mixins。程序员何苦为难程序员！
 
 ###创建 Sinatra Extensions
 
 我们可以简单的创建一个extension。 假设我们需要发送 GET 和 POST 请求到同一个特定的URL可以被同样的方法处理。 我们这么牛逼，当然要遵循DRY原则，不能写两个完全一样的routes的代码。 因此，我们要创建一个extension在处理这个情况。 看看例子3-6.
 
-<sub>Example 3-6. 创建Sinatra::PostGet extension</sub>
+<sub>Example 3-6. 创建 Sinatra::PostGet extension</sub>
 {% highlight ruby %}
 require 'sinatra/base'
 
@@ -43,7 +43,7 @@ end
 > 
 > 成功之后你可以试试把register语句去掉，会怎么样呢？
 
-<sub>Example 3-7. Using custom Sinatra::PostGet extension</sub>
+<sub>Example 3-7. 使用自定义的 Sinatra::PostGet extension</sub>
 {% highlight ruby %}
 require 'sinatra'
 require './sinatra/post_get'
@@ -93,7 +93,7 @@ Helpers 和 extensions看起来差不多但还是有不同的。 和extension用
 
 我们来看一个典型的helper方法：生成hyperlinks。 看例子3-8.
 
-<sub>Example 3-8. A helper method that generates hyperlinks</sub>
+<sub>Example 3-8. 一个生成hyperlinks的helper</sub>
 {% highlight ruby %}
 require 'sinatra/base'
 
@@ -113,8 +113,8 @@ end
 
 你只需要require './sinatra/link_helper'就可以了。 在Erb里面用的效果看例子3-9.
 
-<sub>Example 3-9. An Erb view to test the module</sub>
-{% highlight bash %}
+<sub>Example 3-9. 一个Erb模版来测试module</sub>
+{% highlight ruby %}
 <html>
 <head>
   <title>Link Helper Test</title>
@@ -137,8 +137,8 @@ end
 
 有时候你就是想简单写一两个方法，另建一个module有点小题大做了。那么你可以用helpers方法。
 
-<sub>Example 3-10. Creating a helper via a block</sub>
-{% highlight bash %}
+<sub>Example 3-10. 用helpers创建helper</sub>
+{% highlight ruby %}
 require 'sinatra'
 helpers do
   def link(name)
