@@ -78,7 +78,7 @@ Rack支持在你的程序之前设置chaining filters和chaining routers。用Ra
 
 ###Middleware
 
-Rack对于middleware还有额外的规范。middleware由一个factory对象创建。这个对象实现了`new`方法；`new`方法接受至少一个参数，那就是将会被这个middleware打包的终端。最后middleware返回这个打包好的终端。
+Rack对于middleware还有额外的规范。middleware由一个[factory](https://en.wikipedia.org/wiki/Factory_(object-oriented_programming) "wiki factory")对象创建。这个对象实现了`new`方法；`new`方法接受至少一个参数，那就是将会被这个middleware打包的终端。最后middleware返回这个打包好的终端。
 
 通常情况下，factory就是一个class，比如Sinatra::ShowException，而这个class的实例就是一个拥有一个固定终端的完整的middleware。我们先把Sinatra放一边，再写一个简单的Rack程序。我们可以用一个`Proc`来代替Sinatra，因为它有`call`方法。我们也会简单写一个middleware来检查路径是否正确。
 

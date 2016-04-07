@@ -170,7 +170,7 @@ __END__
 如果你想在extension里面送一个helper，那就可以用一个叫registered的方法，这个方法以app为参数。请看例子3-11。
 
 <sub>Example 3-11. 结合 helpers 和 extensions</sub>
-{% highlight bash %}
+{% highlight ruby %}
 require 'sinatra/base'
 module MyExtension
   module Helpers
