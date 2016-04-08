@@ -3,15 +3,15 @@ title: Sinatra 实现原理(二)
 subtitle: Helpers 和 Extensions
 tags: [翻译, Sinatra]
 ---
-翻译来自 *Sinatra: Up and Running*
+翻译来自 *Sinatra: Up and Running*  
+
+<!--more-->
 
 #Helpers 和 Extensions
 
 现在我们可以用稍微危险一点的方式使用 Sinatra。虽然使用DSL并不是必须的，可以使用modular风格，但这样做有什么好处呢；毕竟DSL强大方便。但还是有一些DSL原生不支持的事情。
 
 延伸 Sinatra 功能的方式主要有两个：extension methods和helpers。 你其实已经在用extension methods了; 明显的例子就是组成大部分classic程序的route handlers（比如get）。
-
-<!--more-->
 
 > 提示
 > 

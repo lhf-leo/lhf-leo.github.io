@@ -7,6 +7,7 @@ tags: [Sinatra]
 这一系列文章讲解十分深入，有很多概念我不得不回头去查阅，从中也学到了不少。在这篇文章，我会就文章中出现的难懂的概念，做出一些补充。
 
 <!--more-->
+
 # UnboundMethod
 
 Ruby 支持两种对象化了的方法：Bound 和 Unbound。 Bound方法是指和一个特定对象绑定起来的方法对象。 Unbound方法自然就是没有被绑定的嘛。╮（￣▽￣）╭ Unbound方法可以通过`instance_method`来创建，或者令bound方法`unbind`。

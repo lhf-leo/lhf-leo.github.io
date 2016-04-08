@@ -3,7 +3,7 @@ title: Sinatra 实现原理(三)
 subtitle: Request，Response 和 Rack
 tags: [翻译, Sinatra]
 ---
-翻译来自 *Sinatra: Up and Running*
+翻译来自 *Sinatra: Up and Running*  
 
 #Request 和 Response
 

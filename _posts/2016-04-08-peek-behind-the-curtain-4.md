@@ -3,7 +3,7 @@ title: Sinatra 实现原理(四)
 subtitle: Dispatching
 tags: [翻译, Sinatra]
 ---
-翻译来自 *Sinatra: Up and Running*
+翻译来自 *Sinatra: Up and Running*  
 
 `这一段暂时超出我的翻译能力，为了完整性先把英文版的给大家看。`
 
