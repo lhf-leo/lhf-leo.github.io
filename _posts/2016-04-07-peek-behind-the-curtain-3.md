@@ -9,6 +9,8 @@ tags: [翻译, Sinatra]
 
 更进一步的理解 Sinatra 内部机制，就需要弄懂一个request的流程，包括从处理到传递一个response回客户端。 为此，我们需要了解 Rack 在 Sinatra 中的角色。
 
+<!--more-->
+
 ###Rack
 
 Rack这个规范不仅只被 Sinatra 使用，Rails，Merb，Ramaze，还有一些别的Ruby项目也同时在使用。 这是一个非常简单的协议，规定一个HTTP服务器（比如Thin）如何与程序对象（比如Sinatra::Application）协作。总之，Rack定义了硬件和软件可以用之相互交流的高等级语言。可以去看看Rack的[主页](http://rack.rubyforge.org "Rack page")。

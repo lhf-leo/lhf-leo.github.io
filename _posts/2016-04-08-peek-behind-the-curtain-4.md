@@ -5,11 +5,13 @@ tags: [翻译, Sinatra]
 ---
 翻译来自 *Sinatra: Up and Running*
 
-`这一段我暂时没有完全理解，为了完整性先把英文版的给大家看。`
+`这一段暂时超出我的翻译能力，为了完整性先把英文版的给大家看。`
 
 #Dispatching
 
 There is, however, one catch: Sinatra relies on the “one instance per request” principle. However, when running as middleware, all requests will use the same instance over and over again. Sinatra performs a clever trick here: instead of executing the logic right away, it duplicates the current instance and hands responsibility on to the duplicate instead. Since instance creation (especially with all the middleware being set up internally) is not free from a performance and resources standpoint, it uses that trick for all requests (even if running as endpoint) by keeping a prototype object around.
+
+<!--more-->
 
 Example 3-16 shows the secret sauce in Sinatra’s dispatch activities.
 
@@ -106,9 +108,6 @@ ruby-1.9.2-p180 > array.instance_eval(&block)
 => "foo"
 {% endhighlight %}
 
-![img](/img/peek-3-6.png)
-<sup>Figure 3-6. generate_method and its usage in Sinatra</sup>
-
 This is similar to what Sinatra does. In fact, earlier versions of Sinatra do use instance_eval. However, there is an alternative: dynamically create a method from that block, get the unbound method object for that method, and remove the method immediately. When you want to run the code, bind the method object to the current instance and call it.
 
 This has a few advantages over instance_eval: it results in significantly better performance since the scope change only occurs once as opposed to every request. It also allows the passing of arguments to the block. Moreover, since you can name the method yourself, it results in more readable stack traces. All of this logic is wrapped in Sinatra’s generate_method, which you can examine in Figure 3-6 and Example 3-20.
@@ -116,6 +115,9 @@ This has a few advantages over instance_eval: it results in significantly better
 > Caution
 > 
 > generate_method is used internally by Sinatra and is not part of the public API. You should not use it directly in your application.
+
+![img](/img/peek-3-6.png)
+<sup>Figure 3-6. generate_method and its usage in Sinatra</sup>
 
 <sub>Example 3-20. generate_method from sinatra/base.rb</sub>
 {% highlight ruby %}
