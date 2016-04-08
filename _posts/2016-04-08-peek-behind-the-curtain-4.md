@@ -7,11 +7,11 @@ tags: [翻译, Sinatra]
 
 `这一段暂时超出我的翻译能力，为了完整性先把英文版的给大家看。`
 
+<!--more-->
+
 #Dispatching
 
 There is, however, one catch: Sinatra relies on the “one instance per request” principle. However, when running as middleware, all requests will use the same instance over and over again. Sinatra performs a clever trick here: instead of executing the logic right away, it duplicates the current instance and hands responsibility on to the duplicate instead. Since instance creation (especially with all the middleware being set up internally) is not free from a performance and resources standpoint, it uses that trick for all requests (even if running as endpoint) by keeping a prototype object around.
-
-<!--more-->
 
 Example 3-16 shows the secret sauce in Sinatra’s dispatch activities.
 

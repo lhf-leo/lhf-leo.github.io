@@ -4,6 +4,8 @@ tags: [Ruby]
 ---
 这两个方法都是对一个对象进行潜复制。它们的区别在于`clone`比`dup`多做了两件事：
 
+<!--more-->
+
 * 复制该对象的singleton
 * 保持该对象的frozen状态
 
