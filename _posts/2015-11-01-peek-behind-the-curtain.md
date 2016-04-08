@@ -99,7 +99,7 @@ ruby-1.9.2-p180 > _.source_location
 => ["~/gems/sinatra-1.3.0/lib/sinatra/base.rb", 1069]
 {% endhighlight %}
 
-有趣的是，像get，post这类的方法实际上被定义了两次。一次是在Sinatra::Delegator，这是一个mixin extending Object。因此这些方法在程序的所有地方都可以使用。这个delegator mixin会直接把同样的函数调用传递给Sinatra::Application，Sinatra::Application从Sinatra::Base继承了这些方法。
+有趣的是，像get，post这类的方法实际上被定义了两次。一次是在Sinatra::Delegator，这是一个[mixin]("http://www.tutorialspoint.com/ruby/ruby_modules.htm")。因此这些方法在程序的所有地方都可以使用。这个delegator mixin会直接把同样的函数调用传递给Sinatra::Application，Sinatra::Application从Sinatra::Base继承了这些方法。
 
 > 提示
 > 
