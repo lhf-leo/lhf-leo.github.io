@@ -86,7 +86,7 @@ foo=bar
   Hi
 {% endhighlight %}
 
-成功了吧？看起来还是还厉害的。
+成功了吧？看起来还是很厉害的。
 
 ###Helpers
 

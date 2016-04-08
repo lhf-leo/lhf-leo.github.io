@@ -3,7 +3,7 @@ title: Sinatra 实现原理(三)
 subtitle: Request，Response 和 Rack
 tags: [翻译, Sinatra]
 ---
-翻译来自 ＊Sinatra: Up and Running＊
+翻译来自 *Sinatra: Up and Running*
 
 #Request 和 Response
 
@@ -11,9 +11,9 @@ tags: [翻译, Sinatra]
 
 ###Rack
 
-Rack 是一个不仅只被 Sinatra 使用的规范，Rails，Merb，Ramaze，还有一些别的Ruby项目也同时在使用。 这是一个非常简单的协议，规定一个HTTP服务器（比如Thin）如何与程序对象（比如Sinatra::Application）协作。总之，Rack定义了硬件和软件可以用之相互交流的高等级语言。可以去看看Rack的[主页](http://rack.rubyforge.org "Rack page")。
+Rack这个规范不仅只被 Sinatra 使用，Rails，Merb，Ramaze，还有一些别的Ruby项目也同时在使用。 这是一个非常简单的协议，规定一个HTTP服务器（比如Thin）如何与程序对象（比如Sinatra::Application）协作。总之，Rack定义了硬件和软件可以用之相互交流的高等级语言。可以去看看Rack的[主页](http://rack.rubyforge.org "Rack page")。
 
-Rack协议的核心规定程序对象，也就是终端，必须要有`call`方法。服务器，也就是处理者，会调用`call`这个方法，同时传递一个参数。这个参数是一个hash，包括所有有关于request的信息：HTTP动词（GET，POST），请求路径，还有客户端发来了headers等等。
+Rack协议的核心规定程序对象，也就是终端，必须要有`call`方法。服务器，也就是处理者，会调用`call`这个方法，同时还会传递一个参数。这个参数是一个hash，包括所有关于request的信息：HTTP动词（GET，POST），请求路径，还有客户端发来了headers等等。
 
 这个`call`方法需要返回一个包涵三个元素的数组。第一个元素是整型状态码，比如说一个成功的request就会收到一个200状态码，表示没有错误。 第二个是一个hash（或者类似hash），包涵所有response的headers。这里你可以找到客户端是否需要缓存，response的长度以及其他类似的信息。最后一个就是body数组（或者类似于数组），只要有each方法就行。
 
@@ -129,4 +129,6 @@ get('/') { 'Hello world!' }
 
 Sinatra::Application这个类就是factory，可以创建配置完整的middleware实例，也就是你的程序实例。当有request进来时，所有的`before`过滤器就会先执行一遍, 如果没有route符合，就把这个request传递给打包好的终端程序。在route处理完或者终端程序处理完之后，`after`过滤器就会被执行一遍。因此，这个Sinatra程序就是一个Rack的middleware。
 
+> 补充
+> 
 > 这一章较难理解，可以参考一下Rack相关知识。也可以在[这里](http://webapps-for-beginners.rubymonstas.org/rack.html "Webapps For Beginners")找一些简单易懂的补充。

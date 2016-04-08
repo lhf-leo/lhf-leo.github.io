@@ -3,16 +3,18 @@ title: Sinatra 实现原理(四)
 subtitle: Dispatching
 tags: [翻译, Sinatra]
 ---
-翻译来自 ＊Sinatra: Up and Running＊
+翻译来自 *Sinatra: Up and Running*
 
-##Dispatching
+`这一段我暂时没有完全理解，为了完整性先把英文版的给大家看。`
+
+#Dispatching
 
 There is, however, one catch: Sinatra relies on the “one instance per request” principle. However, when running as middleware, all requests will use the same instance over and over again. Sinatra performs a clever trick here: instead of executing the logic right away, it duplicates the current instance and hands responsibility on to the duplicate instead. Since instance creation (especially with all the middleware being set up internally) is not free from a performance and resources standpoint, it uses that trick for all requests (even if running as endpoint) by keeping a prototype object around.
 
 Example 3-16 shows the secret sauce in Sinatra’s dispatch activities.
 
-*Example 3-16. The Sinatra dispatch in action*
-{% highlight bash %}
+<sub>Example 3-16. The Sinatra dispatch in action</sub>
+{% highlight ruby %}
 module MySinatra
   class Base
     def self.prototype
@@ -38,12 +40,12 @@ module MySinatra
 end
 {% endhighlight %}
 
-####Dispatching Redux
+###Dispatching Redux
 
 This lets us craft some pretty interesting Sinatra applications. This prototype and instance duplication approach means you can safely use call on the current instance and consume the result of another route. If you remember from the earlier discussion on Rack’s methodology, the call method will return an array. The application in Example 3-17 lets you check the status code and headers of other routes. Figure 3-5 shows the output of the inspector application.
 
-＊Example 3-17. A reflective route inspector＊
-{% highlight bash %}
+<sub>Example 3-17. A reflective route inspector</sub>
+{% highlight ruby %}
 require 'sinatra'
 
 get '/example' do
@@ -71,8 +73,8 @@ end
 
 Now let’s tie everything together with the code in Example 3-18 and create a Sinatra application that acts as middleware.
 
-*Example 3-18. Using Sinatra as middleware in a fictional Rails project*
-{% highlight bash %}
+<sub>Example 3-18. Using Sinatra as middleware in a fictional Rails project</sub>
+{% highlight ruby %}
 require './sinatra_middleware'
 require './config/environment'
 
@@ -80,14 +82,15 @@ use Sinatra::Application
 run MyRailsProject::Application
 {% endhighlight %}
 
-**Figure 3-5. Firing another request internally to inspect the response**
+![img](/img/peek-3-5.png)
+<sup>Figure 3-5. Firing another request internally to inspect the response</sup>
 
-####Changing Bindings
+###Changing Bindings
 
 To bring the discussion back to where we began, let’s focus on a block passed to get again. How is it that the instance methods are actually available? If you’ve been working with Ruby for a decent length of time, you’ve probably come across instance_eval, which allows you to dynamically change the binding of a block. Example 3-19 demonstrates how this can be used.
 
-*Example 3-19. Toying with instance_eval*
-{% highlight bash %}
+<sub>Example 3-19. Toying with instance_eval</sub>
+{% highlight ruby %}
 $ irb
 ruby-1.9.2-p180 > array = ['foo', 'bar']
 => ['foo', 'bar']
@@ -103,20 +106,19 @@ ruby-1.9.2-p180 > array.instance_eval(&block)
 => "foo"
 {% endhighlight %}
 
-**Figure 3-6. generate_method and its usage in Sinatra**
+![img](/img/peek-3-6.png)
+<sup>Figure 3-6. generate_method and its usage in Sinatra</sup>
 
 This is similar to what Sinatra does. In fact, earlier versions of Sinatra do use instance_eval. However, there is an alternative: dynamically create a method from that block, get the unbound method object for that method, and remove the method immediately. When you want to run the code, bind the method object to the current instance and call it.
 
 This has a few advantages over instance_eval: it results in significantly better performance since the scope change only occurs once as opposed to every request. It also allows the passing of arguments to the block. Moreover, since you can name the method yourself, it results in more readable stack traces. All of this logic is wrapped in Sinatra’s generate_method, which you can examine in Figure 3-6 and Example 3-20.
 
-```
-Caution
+> Caution
+> 
+> generate_method is used internally by Sinatra and is not part of the public API. You should not use it directly in your application.
 
-generate_method is used internally by Sinatra and is not part of the public API. You should not use it directly in your application.
-```
-
-*Example 3-20. generate_method from sinatra/base.rb*
-{% highlight bash %}
+<sub>Example 3-20. generate_method from sinatra/base.rb</sub>
+{% highlight ruby %}
 def generate_method(method_name, &block)
   define_method(method_name, &block)
   method = instance_method method_name
@@ -124,11 +126,3 @@ def generate_method(method_name, &block)
   method
 end
 {% endhighlight %}
-
-##Summary
-
-This has been a deep chapter! It’s certainly a lot to take in given how simple and straightforward Sinatra is on the surface. We have started by digging just a little deeper into Sinatra’s implementation details with every step in this chapter. By now, you should have a general understanding of what is going on, how the routing system works, and what Sinatra will do with the results.
-
-We also introduced you to Rack in this chapter, which is the foundation for basically any and all Ruby web applications you’re likely to run across. Understanding Rack will also help you understand the internals of other Ruby web frameworks and libraries (such as Rails) or web servers (like Thin). Understanding how Sinatra and Rack tick will help us design cleaner and more powerful applications, and opens the doors from a creative architecture standpoint.
-
-In Chapter 4, we will have a look into modular applications, which allows Sinatra to be an even better Rack citizen.
