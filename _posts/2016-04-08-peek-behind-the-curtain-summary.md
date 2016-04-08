@@ -10,7 +10,9 @@ tags: [Sinatra]
 
 # UnboundMethod
 
-Ruby 支持两种对象化了的方法：Bound 和 Unbound。 Bound方法是指和一个特定对象绑定起来的方法对象。 Unbound方法自然就是没有被绑定的嘛。╮（￣▽￣）╭ Unbound方法可以通过`instance_method`来创建，或者令bound方法`unbind`。
+Ruby 支持两种对象化了的方法：Bound 和 Unbound。 Bound方法是指和一个特定对象绑定起来的方法对象。 
+Unbound方法自然就是没有被绑定的嘛。╮（￣▽￣）╭ 
+Unbound方法可以通过`instance_method`来创建，或者令bound方法`unbind`。
 
 Unbound方法只能在绑定后才能被调用，而且必须绑定在一个 和这个方法被解绑下来的类（对象）的实例 上（只要这个实例是`kind_of?`这个类就行）。 
 
