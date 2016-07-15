@@ -5,11 +5,11 @@ tags: [翻译, Sinatra]
 ---
 翻译来自 *Sinatra: Up and Running*  
 
+<!--more-->
+
 #Request 和 Response
 
 更进一步的理解 Sinatra 内部机制，就需要弄懂一个request的流程，包括从处理到传递一个response回客户端。 为此，我们需要了解 Rack 在 Sinatra 中的角色。
-
-<!--more-->
 
 ###Rack
 
