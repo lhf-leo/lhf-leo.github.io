@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="I Leo, I learn and I love.">
+
+    <title>Markdown helper from Mou - Liao Hanfu's Blog</title>
+    <link rel="icon" type="image/ico" href="/img/favicon.ico" />
+
+    <link rel="canonical" href="http://hanfu.space/others/2015/08/20/markdown-helper/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+
+<body>
+    <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-5MK7Q6"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5MK7Q6');</script>
+<!-- End Google Tag Manager -->
+    
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header page-scroll">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Liao Hanfu's Blog</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="/about/">about</a>
+        </li>
+        <li>
+          <a href="/contact/">contact</a>
+        </li>
+      </ul>
+    </div>
+    <!-- /.navbar-collapse -->
+  </div>
+  <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<header class="intro-header" style="background-image: url('/img/home-bg.jpg')">
+  <div class="graylayer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+          <div class="post-heading">
+            <h1>Markdown helper from Mou</h1> 
+            <h2 class="subheading">Cheat sheet for markdown</h2> 
+            <span class="post-tag">
+              About Others
+              
+            </span>
+            <span class="meta">Posted by Not Me! on August 20, 2015</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Post Content -->
+<article>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p>This is just Markdown diction.
+<!--more--></p>
+
+<noscript><pre>    {% for page in (1..paginator.total_pages) %}
+      {% if page == paginator.page %}
+        &lt;li&gt;
+          &lt;a href=&quot;#&quot; class=&quot;current&quot;&gt;{{ page }}&lt;/a&gt;
+        &lt;/li&gt;
+      {% elsif page == 1 %}
+        &lt;li&gt;
+          &lt;a href=&quot;{{ paginator.previous_page_path | prepend: site.baseurl | replace: &#39;//&#39;, &#39;/&#39; }}&quot;&gt;{{ page }}&lt;/a&gt;
+        &lt;/li&gt;
+      {% else %}
+        &lt;li&gt;
+          &lt;a href=&quot;{{ site.paginate_path | prepend: site.baseurl | replace: &#39;//&#39;, &#39;/&#39; | replace: &#39;:num&#39;, page }}&quot;&gt;{{ page }}&lt;/a&gt;
+        &lt;/li&gt;
+      {% endif %}
+    {% endfor %}</pre></noscript>
+<script src="https://gist.github.com/lhf-leo/04ace022699e375291fb.js"> </script>
+
+<p><img src="http://25.io/mou/Mou_128.png" alt="Mou icon" /></p>
+
+<h2 id="overview">Overview</h2>
+
+<p><strong>Mou</strong>, the missing Markdown editor for <em>web developers</em>.</p>
+
+<h3 id="syntax">Syntax</h3>
+
+<h4 id="strong-and-emphasize">Strong and Emphasize</h4>
+
+<p><strong>strong</strong> or <strong>strong</strong> ( Cmd + B )</p>
+
+<p><em>emphasize</em> or <em>emphasize</em> ( Cmd + I )</p>
+
+<p><strong>Sometimes I want a lot of text to be bold.
+Like, seriously, a <em>LOT</em> of text</strong></p>
+
+<h4 id="blockquotes">Blockquotes</h4>
+
+<blockquote>
+  <p>Right angle brackets &gt; are used for block quotes.</p>
+</blockquote>
+
+<h4 id="links-and-email">Links and Email</h4>
+
+<p>An email <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#101;&#120;&#097;&#109;&#112;&#108;&#101;&#064;&#101;&#120;&#097;&#109;&#112;&#108;&#101;&#046;&#099;&#111;&#109;">&#101;&#120;&#097;&#109;&#112;&#108;&#101;&#064;&#101;&#120;&#097;&#109;&#112;&#108;&#101;&#046;&#099;&#111;&#109;</a> link.</p>
+
+<p>Simple inline link <a href="http://chenluois.com">http://chenluois.com</a>, another inline link <a href="http://25.io/smaller/">Smaller</a>, one more inline link with title <a href="http://resizesafari.com" title="a Safari extension">Resize</a>.</p>
+
+<p>A <a href="http://25.io/mou/" title="Markdown editor on Mac OS X">reference style</a> link. Input id, then anywhere in the doc, define the link with corresponding id:</p>
+
+<p>Titles ( or called tool tips ) in the links are optional.</p>
+
+<h4 id="images">Images</h4>
+
+<p>An inline image <img src="http://25.io/smaller/favicon.ico" alt="Smaller icon" title="Title here" />, title is optional.</p>
+
+<p>A <img src="http://resizesafari.com/favicon.ico" alt="Resize icon" title="Title" /> reference style image.</p>
+
+<h4 id="inline-code-and-block-code">Inline code and Block code</h4>
+
+<p>Inline code are surround by <code>backtick</code> key. To create a block code:</p>
+
+<figure class="highlight"><pre><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloWorld</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span> <span class="n">args</span><span class="o">[])</span> <span class="o">{</span>
+      <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;Hello World!&quot;</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span></code></pre></figure>
+
+<h4 id="ordered-lists">Ordered Lists</h4>
+<p>Ordered lists are created using “1.” + Space:</p>
+
+<ol>
+  <li>Ordered list item</li>
+  <li>Ordered list item</li>
+  <li>Ordered list item</li>
+</ol>
+
+<h4 id="unordered-lists">Unordered Lists</h4>
+
+<p>Unordered list are created using “*” + Space:</p>
+
+<ul>
+  <li>Unordered list item</li>
+  <li>Unordered list item</li>
+  <li>Unordered list item</li>
+</ul>
+
+<p>Or using “-“ + Space:</p>
+
+<ul>
+  <li>Unordered list item</li>
+  <li>Unordered list item</li>
+  <li>Unordered list item</li>
+</ul>
+
+<h4 id="hard-linebreak">Hard Linebreak</h4>
+
+<p>End a line with two or more spaces will create a hard linebreak, called <code>&lt;br /&gt;</code> in HTML. ( Control + Return )<br />
+Above line ended with 2 spaces.</p>
+
+<h4 id="horizontal-rules">Horizontal Rules</h4>
+
+<p>Three or more asterisks or dashes:</p>
+
+<hr />
+
+<hr />
+
+<hr />
+
+<h4 id="headers">Headers</h4>
+
+<p>Setext-style:</p>
+
+<h1 id="this-is-h1">This is H1</h1>
+
+<h2 id="this-is-h2">This is H2</h2>
+
+<p>atx-style:</p>
+
+<h1 id="this-is-h1-1">This is H1</h1>
+<p>## This is H2
+### This is H3
+#### This is H4
+##### This is H5
+###### This is H6</p>
+
+<h3 id="extra-syntax">Extra Syntax</h3>
+
+<h4 id="footnotes">Footnotes</h4>
+
+<p>Footnotes work mostly like reference-style links. A footnote is made of two things: a marker in the text that will become a superscript number; a footnote definition that will be placed in a list of footnotes at the end of the document. A footnote looks like this:</p>
+
+<p>That’s some text with a footnote.<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup></p>
+
+<h4 id="strikethrough">Strikethrough</h4>
+
+<p>Wrap with 2 tilde characters:</p>
+
+<p>~~Strikethrough~~</p>
+
+<h4 id="fenced-code-blocks">Fenced Code Blocks</h4>
+
+<p>Start with a line containing 3 or more backticks, and ends with the first line with the same number of backticks:</p>
+
+<p><code>
+Fenced code blocks are like Stardard Markdown’s regular code
+blocks, except that they’re not indented and instead rely on
+a start and end fence lines to delimit the code block.
+</code></p>
+
+<h4 id="tables">Tables</h4>
+
+<p>A simple table looks like this:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>First Header</th>
+      <th>Second Header</th>
+      <th>Third Header</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Content Cell</td>
+      <td>Content Cell</td>
+      <td>Content Cell</td>
+    </tr>
+    <tr>
+      <td>Content Cell</td>
+      <td>Content Cell</td>
+      <td>Content Cell</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>If you wish, you can add a leading and tailing pipe to each line of the table:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>First Header</th>
+      <th>Second Header</th>
+      <th>Third Header</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Content Cell</td>
+      <td>Content Cell</td>
+      <td>Content Cell</td>
+    </tr>
+    <tr>
+      <td>Content Cell</td>
+      <td>Content Cell</td>
+      <td>Content Cell</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Specify alignment for each column by adding colons to separator lines:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">First Header</th>
+      <th style="text-align: center">Second Header</th>
+      <th style="text-align: right">Third Header</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Left</td>
+      <td style="text-align: center">Center</td>
+      <td style="text-align: right">Right</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Left</td>
+      <td style="text-align: center">Center</td>
+      <td style="text-align: right">Right</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="footnotes">
+  <ol>
+    <li id="fn:1">
+      <p>And that’s the footnote. <a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+	<p> (END) </p>
+        <ul class="pager">
+           
+          <li class="next">
+            <a href="/life/2015/08/21/life-title/" data-toggle="tooltip" data-placement="top" title="女人和猫">Next Post &rarr;</a>
+          </li>
+          
+        </ul>
+        <hr>
+        <div id="disqus_thread"></div>
+      </div>
+
+    </div>
+  </div>
+</article>
+<hr>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://twitter.com/lhf_leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://www.facebook.com/lhf.leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://github.com/lhf-leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <p class="copyright text-muted">Copyright &copy; Liao Hanfu's Blog 2015</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/custom.js "></script>
+
+
+</body>
+
+</html>

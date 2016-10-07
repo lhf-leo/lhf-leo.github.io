@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="I Leo, I learn and I love.">
+
+    <title>Sinatra 实现原理(二) - Liao Hanfu's Blog</title>
+    <link rel="icon" type="image/ico" href="/img/favicon.ico" />
+
+    <link rel="canonical" href="http://hanfu.space/%E6%8A%80%E6%9C%AF/2016/04/06/peek-behind-the-curtain-2/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+
+<body>
+    <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-5MK7Q6"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5MK7Q6');</script>
+<!-- End Google Tag Manager -->
+    
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header page-scroll">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Liao Hanfu's Blog</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="/about/">about</a>
+        </li>
+        <li>
+          <a href="/contact/">contact</a>
+        </li>
+      </ul>
+    </div>
+    <!-- /.navbar-collapse -->
+  </div>
+  <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<header class="intro-header" style="background-image: url('/img/home-bg.jpg')">
+  <div class="graylayer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+          <div class="post-heading">
+            <h1>Sinatra 实现原理(二)</h1> 
+            <h2 class="subheading">Helpers 和 Extensions</h2> 
+            <span class="post-tag">
+              About 技术
+              
+                  in
+                  
+                      <span class="tag"> &bull;  翻译</span>
+                  
+                      <span class="tag"> &bull;  Sinatra</span>
+                  
+              
+            </span>
+            <span class="meta">Posted by Liao Hanfu's Blog on April 6, 2016</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Post Content -->
+<article>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p>翻译来自 <em>Sinatra: Up and Running</em></p>
+
+<!--more-->
+
+<h1 id="helpers--extensions">Helpers 和 Extensions</h1>
+
+<p>现在我们可以用稍微危险一点的方式使用 Sinatra。虽然使用DSL并不是必须的，可以使用modular风格，但这样做有什么好处呢；毕竟DSL强大方便。但还是有一些DSL原生不支持的事情。</p>
+
+<p>延伸 Sinatra 功能的方式主要有两个：extension methods和helpers。 你其实已经在用extension methods了; 明显的例子就是组成大部分classic程序的route handlers（比如get）。</p>
+
+<blockquote>
+  <p>提示</p>
+
+  <p>当创建extension 和 helper时，best practice是把它们打包在一个module里面并用register方法让Sinatra决定在哪用这些modules作为mixins。程序员何苦为难程序员！</p>
+</blockquote>
+
+<h3 id="sinatra-extensions">创建 Sinatra Extensions</h3>
+
+<p>我们可以简单的创建一个extension。 假设我们需要发送 GET 和 POST 请求到同一个特定的URL可以被同样的方法处理。 我们这么牛逼，当然要遵循 DRY 原则，不能写两个完全一样的routes的代码。 因此，我们要创建一个extension在处理这个情况。 看看例子3-6.</p>
+
+<p><sub>Example 3-6. 创建 Sinatra::PostGet extension</sub></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;sinatra/base&#39;</span>
+
+<span class="k">module</span> <span class="nn">Sinatra</span>
+  <span class="k">module</span> <span class="nn">PostGet</span>
+    <span class="k">def</span> <span class="nf">post_get</span><span class="p">(</span><span class="n">route</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+      <span class="n">get</span><span class="p">(</span><span class="n">route</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+      <span class="n">post</span><span class="p">(</span><span class="n">route</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1"># register一下</span>
+  <span class="n">register</span> <span class="no">PostGet</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>在“sinatra”文件夹下面简单地创建一个sinatra程序，和你的extension，就叫“post_get.rb”。 例子3-7告诉我们怎么用。</p>
+
+<blockquote>
+  <p>提示</p>
+
+  <p>成功之后你可以试试把<code>register</code>语句去掉，会怎么样呢？</p>
+</blockquote>
+
+<p><sub>Example 3-7. 使用自定义的 Sinatra::PostGet extension</sub></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;sinatra&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;./sinatra/post_get&#39;</span>
+
+<span class="n">post_get</span> <span class="s1">&#39;/&#39;</span> <span class="k">do</span>
+  <span class="s2">&quot;Hi </span><span class="si">#{</span><span class="n">params</span><span class="o">[</span><span class="ss">:name</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>现在我们可以打开telnet看看运行得怎么样。</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>telnet 0.0.0.0 4567
+Trying 0.0.0.0...
+Connected to 0.0.0.0.
+Escape character is <span class="s1">&#39;^]&#39;</span>.
+GET / HTTP/1.1
+Host: 0.0.0.0
+
+  HTTP/1.1 <span class="m">200</span> OK
+  Content-Type: text/html<span class="p">;</span><span class="nv">charset</span><span class="o">=</span>utf-8
+  Content-Length: 3
+  Connection: keep-alive
+  Server: thin 1.2.11 codename Bat-Shit Crazy
+
+  Hi
+
+POST / HTTP/1.1
+Host: localhost:4567
+Content-Length: 7
+
+<span class="nv">foo</span><span class="o">=</span>bar
+
+  HTTP/1.1 <span class="m">200</span> OK
+  Content-Type: text/html<span class="p">;</span><span class="nv">charset</span><span class="o">=</span>utf-8
+  Content-Length: 3
+  Connection: keep-alive
+  Server: thin 1.2.11 codename Bat-Shit Crazy
+
+  Hi</code></pre></figure>
+
+<p>成功了吧？看起来还是很厉害的。</p>
+
+<h3 id="helpers">Helpers</h3>
+
+<p>Helpers 和 extensions看起来差不多但还是有不同的。 和extension用<code>register</code>不同，helpers用<code>helpers</code>。╮（￣▽￣）╭ <code>更重要的是，他们不仅可以用在routes的代码中，还可以用在模版中，在整个程序中提高效率。</code></p>
+
+<p>我们来看一个典型的helper方法：生成hyperlinks。 看例子3-8.</p>
+
+<p><sub>Example 3-8. 一个生成 hyperlinks 的 helper</sub></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;sinatra/base&#39;</span>
+
+<span class="k">module</span> <span class="nn">Sinatra</span>
+  <span class="k">module</span> <span class="nn">LinkHelper</span>
+    <span class="k">def</span> <span class="nf">link</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+      <span class="k">case</span> <span class="nb">name</span>
+      <span class="k">when</span> <span class="ss">:about</span> <span class="k">then</span> <span class="s1">&#39;/about&#39;</span>
+      <span class="k">when</span> <span class="ss">:index</span> <span class="k">then</span> <span class="s1">&#39;/index&#39;</span>
+      <span class="k">else</span> <span class="s2">&quot;/page/</span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">helpers</span> <span class="no">LinkHelper</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>你只需要<code>require './sinatra/link_helper'</code>就可以了。 在Erb里面用的效果看例子3-9.</p>
+
+<p><sub>Example 3-9. 一个 Erb 模版来测试 module</sub></p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+  <span class="nt">&lt;title&gt;</span>Link Helper Test<span class="nt">&lt;/title&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+  <span class="nt">&lt;nav&gt;</span>
+    <span class="nt">&lt;ul&gt;</span>
+      <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">&quot;&lt;%= link(:index) %&gt;&quot;</span><span class="nt">&gt;</span>Index<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+      <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">&quot;&lt;%= link(:about) %&gt;&quot;</span><span class="nt">&gt;</span>About<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+      <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">&quot;&lt;%= link(:random) %&gt;&quot;</span><span class="nt">&gt;</span>Random<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="nt">&lt;/ul&gt;</span>
+  <span class="nt">&lt;/nav&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span></code></pre></figure>
+
+<p>这些链接完美地指向<code>/index</code>，<code>/about</code>，和<code>/page/random</code>。</p>
+
+<h4 id="moduleshelpers">不在Modules下的Helpers</h4>
+
+<p>有时候你就是想简单写一两个方法，另建一个module有点小题大做了。那么你可以用helpers方法。</p>
+
+<p><sub>Example 3-10. 用 helpers 创建 helper</sub></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;sinatra&#39;</span>
+<span class="n">helpers</span> <span class="k">do</span>
+  <span class="k">def</span> <span class="nf">link</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+    <span class="k">case</span> <span class="nb">name</span>
+    <span class="k">when</span> <span class="ss">:about</span> <span class="k">then</span> <span class="s1">&#39;/about&#39;</span>
+    <span class="k">when</span> <span class="ss">:index</span> <span class="k">then</span> <span class="s1">&#39;/index&#39;</span>
+    <span class="k">else</span> <span class="s2">&quot;/page/</span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">&quot;</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">get</span> <span class="s1">&#39;/&#39;</span> <span class="k">do</span>
+  <span class="n">erb</span> <span class="ss">:index</span>
+<span class="k">end</span>
+
+<span class="n">get</span> <span class="s1">&#39;/index.html&#39;</span> <span class="k">do</span>
+  <span class="n">redirect</span> <span class="n">link</span><span class="p">(</span><span class="ss">:index</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="cp">__END__</span>
+
+<span class="cp">@@index</span>
+<span class="cp">&lt;a href=&quot;&lt;%= link :about %&gt;&quot;&gt;about&lt;/a&gt;</span></code></pre></figure>
+
+<h3 id="helpers--extensions-1">结合 Helpers 和 Extensions</h3>
+
+<p>如果你想在extension里面送一个helper，那就可以用一个叫registered的方法，这个方法以app为参数。请看例子3-11。</p>
+
+<p><sub>Example 3-11. 结合 helpers 和 extensions</sub></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;sinatra/base&#39;</span>
+<span class="k">module</span> <span class="nn">MyExtension</span>
+  <span class="k">module</span> <span class="nn">Helpers</span>
+    <span class="c1"># helper方法写这里</span>
+  <span class="k">end</span>
+
+  <span class="c1"># extension方法写这里</span>
+
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">registered</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">helpers</span> <span class="no">Helpers</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="no">Sinatra</span><span class="o">.</span><span class="n">register</span> <span class="no">MyExtension</span></code></pre></figure>
+
+
+	<p> (END) </p>
+        <ul class="pager">
+          
+          <li class="previous">
+            <a href="/%E7%94%9F%E6%B4%BB/2015/12/01/after-gre/" data-toggle="tooltip" data-placement="top" title="第一次GRE与第三次黑五">&larr; Previous Post</a>
+          </li>
+           
+          <li class="next">
+            <a href="/%E6%8A%80%E6%9C%AF/2016/04/07/peek-behind-the-curtain-3/" data-toggle="tooltip" data-placement="top" title="Sinatra 实现原理(三)">Next Post &rarr;</a>
+          </li>
+          
+        </ul>
+        <hr>
+        <div id="disqus_thread"></div>
+      </div>
+
+    </div>
+  </div>
+</article>
+<hr>
+
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    // Required: on line below, replace text in quotes with your forum shortname
+    var disqus_shortname = 'hanfuspace';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://twitter.com/lhf_leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://www.facebook.com/lhf.leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://github.com/lhf-leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <p class="copyright text-muted">Copyright &copy; Liao Hanfu's Blog 2016</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/custom.js "></script>
+
+
+</body>
+
+</html>

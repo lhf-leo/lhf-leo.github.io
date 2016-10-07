@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="I Leo, I learn and I love.">
+
+    <title>Ruby的Class, Modules, Extend, Include, Mixins... - Liao Hanfu's Blog</title>
+    <link rel="icon" type="image/ico" href="/img/favicon.ico" />
+
+    <link rel="canonical" href="http://hanfu.space/%E6%8A%80%E6%9C%AF/2016/07/15/ruby-class-and-module/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+
+<body>
+    <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-5MK7Q6"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5MK7Q6');</script>
+<!-- End Google Tag Manager -->
+    
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header page-scroll">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Liao Hanfu's Blog</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="/about/">about</a>
+        </li>
+        <li>
+          <a href="/contact/">contact</a>
+        </li>
+      </ul>
+    </div>
+    <!-- /.navbar-collapse -->
+  </div>
+  <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<header class="intro-header" style="background-image: url('/img/home-bg.jpg')">
+  <div class="graylayer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+          <div class="post-heading">
+            <h1>Ruby的Class, Modules, Extend, Include, Mixins...</h1> 
+            <h2 class="subheading">还有谁？！</h2> 
+            <span class="post-tag">
+              About 技术
+              
+                  in
+                  
+                      <span class="tag"> &bull;  Ruby</span>
+                  
+              
+            </span>
+            <span class="meta">Posted by Liao Hanfu's Blog on July 15, 2016</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Post Content -->
+<article>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p>刚开始接触Ruby，除了“ Ruby 是世界上最好的语言”，最大的感触就是：好像随便怎么写都是对的。其中最明显的就是 Extend 和 Include 的用法，我一直凭借着类似于高中做英语选择题的“语感”来决定用哪一个。然而“并非夏去秋才至”，这个问题应该早点搞清楚。</p>
+
+<h1 id="module--class">Module 还是 Class</h1>
+
+<p>首先这两个语法都能用在 Module 上，不能用在 Class 上。我们就先从 Module 和 Class 的区别聊起。Class 其实很简单直接，大家大学一般都是从 Java 开始的：和 Java Class 是一样的，用来定义和创造对象。而 Module 是用来提供 namespace 和当做 mixin 用的，硬要作比喻的话，就像 Java 里面 abstract class 与 package 的综合体。有一点需要注意：Class 这个类的父类就是 Module。看个表就都清楚了：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Class</th>
+      <th>Module</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>能否初始化</td>
+      <td>能</td>
+      <td>不能</td>
+    </tr>
+    <tr>
+      <td>用途</td>
+      <td>定义和新建对象</td>
+      <td>namespace，mixin</td>
+    </tr>
+    <tr>
+      <td>父类</td>
+      <td>Module</td>
+      <td>Object</td>
+    </tr>
+    <tr>
+      <td>继承</td>
+      <td>能继承与被继承</td>
+      <td>不能</td>
+    </tr>
+    <tr>
+      <td>Inclusion</td>
+      <td>不能</td>
+      <td>可以用 <code>include</code> 在class和module里</td>
+    </tr>
+    <tr>
+      <td>Extension</td>
+      <td>不能</td>
+      <td>可以用 <code>extend</code> 在class和module里</td>
+    </tr>
+    <tr>
+      <td>包含函数</td>
+      <td>Class函数和实例函数</td>
+      <td>Module函数和实例函数</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>基本上讲，Class 就是关于对象的，Module 就是关于方法的。Module 应该是可以用来在各种不同的类中提供方法，最典型的就是验证授权——所有的类都要验证授权，这些方法就像API一样。这就是为什么一般都把 Module 放到 library 文件夹下。</p>
+
+<h1 id="include--extend"><code>include</code> 还是 <code>extend</code></h1>
+<p>刚刚说到了 <code>include</code> 和 <code>extend</code>，都是用来引进 modules 的。之间的区别又是什么呢？举个小🌰：</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">module</span> <span class="nn">Foo</span>
+  <span class="k">def</span> <span class="nf">foo1</span>
+    <span class="nb">puts</span> <span class="s1">&#39;foo1!&#39;</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">foo2</span>
+    <span class="nb">puts</span> <span class="s1">&#39;foo2!&#39;</span>
+  <span class="k">end</span>
+  <span class="kp">module_function</span> <span class="ss">:foo2</span>
+<span class="k">end</span>
+
+<span class="no">Foo</span><span class="o">.</span><span class="n">foo2</span> <span class="c1"># foo2!</span>
+
+<span class="k">class</span> <span class="nc">Bar</span>
+  <span class="kp">include</span> <span class="no">Foo</span>
+<span class="k">end</span>
+
+<span class="no">Bar</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">foo1</span> <span class="c1"># foo1!</span>
+<span class="no">Bar</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">foo2</span> <span class="c1"># NoMethodError: private method `f2&#39; called for #&lt;Bar:0x007f9604884b58&gt;</span>
+<span class="no">Bar</span><span class="o">.</span><span class="n">foo1</span> <span class="c1"># NoMethodError: undefined method ‘foo1’ for Bar:Class</span>
+
+<span class="k">class</span> <span class="nc">Baz</span>
+  <span class="kp">extend</span> <span class="no">Foo</span>
+<span class="k">end</span>
+
+<span class="no">Baz</span><span class="o">.</span><span class="n">foo1</span> <span class="c1"># foo1!</span>
+<span class="no">Baz</span><span class="o">.</span><span class="n">foo2</span> <span class="c1"># NoMethodError: private method `foo2&#39; called for Bar:Class</span>
+<span class="no">Baz</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">foo1</span> <span class="c1"># NoMethodError: undefined method ‘foo1’ for #&lt;Baz:0x1e708&gt;</span></code></pre></figure>
+
+<p>先看 Foo 的实例函数 foo1。<code>include</code> 就是把 Foo 的实例函数变成自己的实例函数。 <code>extend</code> 就是把 Foo 的实例函数变成自己的类函数。而 Foo 的 module 函数呢，只能自己用，也叫私有函数。这样应该就很清楚了。</p>
+
+<p>不过这里之所以很容易搞混淆是因为一个 Ruby 的通用惯例，当中就包括 rails：很多时候，人们都会通过 <code>included</code> 这个方法把 Module 内部定义的 ClassMethods <code>extend</code> 到调用这个 Module 的类中。所以看起来好像你只是 <code>include</code> 一个 Module 也可以添加类方法，而其实只是 <code>extend</code> 了另外一个 Module 而已。</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">module</span> <span class="nn">Foo</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">included</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+    <span class="n">base</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="no">ClassMethods</span><span class="p">)</span>
+  <span class="k">end</span>
+  
+  <span class="k">module</span> <span class="nn">ClassMethods</span>
+    <span class="k">def</span> <span class="nf">bar</span>
+      <span class="nb">puts</span> <span class="s1">&#39;class method&#39;</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nf">foo</span>
+    <span class="nb">puts</span> <span class="s1">&#39;instance method&#39;</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Baz</span>
+  <span class="kp">include</span> <span class="no">Foo</span>
+<span class="k">end</span>
+
+<span class="no">Baz</span><span class="o">.</span><span class="n">bar</span> <span class="c1"># class method</span>
+<span class="no">Baz</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">foo</span> <span class="c1"># instance method</span>
+<span class="no">Baz</span><span class="o">.</span><span class="n">foo</span> <span class="c1"># NoMethodError: undefined method ‘foo’ for Baz:Class</span>
+<span class="no">Baz</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">bar</span> <span class="c1"># NoMethodError: undefined method ‘bar’ for #&lt;Baz:0x1e3d4&gt;</span></code></pre></figure>
+
+<h1 id="mixin">新名词 Mixin</h1>
+
+<p>说到现在， Mixin 也只是一个新名字而已了——就是那些寂寞的类不满足于继承一个父类，于是就 include 更多 Module 想要一统天下。对于这种走火入魔盲目崇拜力量的类，我们为了告诫后人，就称它们为：迷信（Mi Xin）。</p>
+
+	<p> (END) </p>
+        <ul class="pager">
+          
+          <li class="previous">
+            <a href="/%E7%94%9F%E6%B4%BB/2016/07/14/what-you-want-is-wrong/" data-toggle="tooltip" data-placement="top" title="你想要什么">&larr; Previous Post</a>
+          </li>
+           
+          <li class="next">
+            <a href="/%E6%8A%80%E6%9C%AF/2016/10/07/slack-codedeploy-status/" data-toggle="tooltip" data-placement="top" title="用Slack显示CodeDeploy状态">Next Post &rarr;</a>
+          </li>
+          
+        </ul>
+        <hr>
+        <div id="disqus_thread"></div>
+      </div>
+
+    </div>
+  </div>
+</article>
+<hr>
+
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    // Required: on line below, replace text in quotes with your forum shortname
+    var disqus_shortname = 'hanfuspace';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://twitter.com/lhf_leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://www.facebook.com/lhf.leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://github.com/lhf-leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <p class="copyright text-muted">Copyright &copy; Liao Hanfu's Blog 2016</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/custom.js "></script>
+
+
+</body>
+
+</html>

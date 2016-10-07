@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="I Leo, I learn and I love.">
+
+    <title>Sinatra 实现原理(三) - Liao Hanfu's Blog</title>
+    <link rel="icon" type="image/ico" href="/img/favicon.ico" />
+
+    <link rel="canonical" href="http://hanfu.space/%E6%8A%80%E6%9C%AF/2016/04/07/peek-behind-the-curtain-3/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+
+<body>
+    <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-5MK7Q6"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5MK7Q6');</script>
+<!-- End Google Tag Manager -->
+    
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header page-scroll">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Liao Hanfu's Blog</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="/about/">about</a>
+        </li>
+        <li>
+          <a href="/contact/">contact</a>
+        </li>
+      </ul>
+    </div>
+    <!-- /.navbar-collapse -->
+  </div>
+  <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<header class="intro-header" style="background-image: url('/img/home-bg.jpg')">
+  <div class="graylayer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+          <div class="post-heading">
+            <h1>Sinatra 实现原理(三)</h1> 
+            <h2 class="subheading">Request，Response 和 Rack</h2> 
+            <span class="post-tag">
+              About 技术
+              
+                  in
+                  
+                      <span class="tag"> &bull;  翻译</span>
+                  
+                      <span class="tag"> &bull;  Sinatra</span>
+                  
+              
+            </span>
+            <span class="meta">Posted by Liao Hanfu's Blog on April 7, 2016</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Post Content -->
+<article>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p>翻译来自 <em>Sinatra: Up and Running</em></p>
+
+<!--more-->
+
+<h1 id="request--response">Request 和 Response</h1>
+
+<p>更进一步的理解 Sinatra 内部机制，就需要弄懂一个request的流程，包括从处理到传递一个response回客户端。 为此，我们需要了解 Rack 在 Sinatra 中的角色。</p>
+
+<h3 id="rack">Rack</h3>
+
+<p>Rack这个规范不仅只被 Sinatra 使用，Rails，Merb，Ramaze，还有一些别的Ruby项目也同时在使用。 这是一个非常简单的协议，规定一个HTTP服务器（比如Thin）如何与程序对象（比如Sinatra::Application）协作。总之，Rack定义了硬件和软件可以用之相互交流的高等级语言。可以去看看Rack的<a href="http://rack.rubyforge.org" title="Rack page">主页</a>。</p>
+
+<p>Rack协议的核心规定程序对象，也就是终端，必须要有<code>call</code>方法。服务器，也就是处理者，会调用<code>call</code>这个方法，同时还会传递一个参数。这个参数是一个hash，包括所有关于request的信息：HTTP动词（GET，POST），请求路径，还有客户端发来了headers等等。</p>
+
+<p>这个<code>call</code>方法需要返回一个包涵三个元素的数组。第一个元素是整型状态码，比如说一个成功的request就会收到一个200状态码，表示没有错误。 第二个是一个hash（或者类似hash），包涵所有response的headers。这里你可以找到客户端是否需要缓存，response的长度以及其他类似的信息。最后一个就是body数组（或者类似于数组），只要有each方法就行。</p>
+
+<h3 id="sinatra--sinatra">不用 Sinatra 的 Sinatra</h3>
+
+<p>这样运行一个Sinatra程序而不调用Sinatra的方法是完全可以实现也可以被接受。我们试着把一个简单的sinatra程序放到纯Rack环境下，看例子3-12。</p>
+
+<p><sub>Example 3-12. Simplified equivalent of a Sinatra application using Rack</sub></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">module</span> <span class="nn">MySinatra</span>
+  <span class="k">class</span> <span class="nc">Application</span>
+    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+      <span class="kp">new</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+      <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/html&#39;</span><span class="p">}</span>
+      <span class="k">if</span> <span class="n">env</span><span class="o">[</span><span class="s1">&#39;PATH_INFO&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;/&#39;</span>
+        <span class="n">status</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="s1">&#39;hi&#39;</span>
+      <span class="k">else</span>
+        <span class="n">status</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="mi">404</span><span class="p">,</span> <span class="s2">&quot;Sinatra doesn&#39;t know this ditty!&quot;</span>
+      <span class="k">end</span>
+      <span class="n">headers</span><span class="o">[</span><span class="s1">&#39;Content-Length&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="n">body</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">to_s</span>
+      <span class="o">[</span><span class="n">status</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="o">[</span><span class="n">body</span><span class="o">]]</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="nb">require</span> <span class="s1">&#39;thin&#39;</span>
+<span class="no">Thin</span><span class="o">::</span><span class="no">Server</span><span class="o">.</span><span class="n">start</span> <span class="no">MySinatra</span><span class="o">::</span><span class="no">Application</span><span class="p">,</span> <span class="mi">4567</span></code></pre></figure>
+
+<p>这个例子大致等效于<code>get('/') { 'hi' }</code>。 当然这不完全是Sinatra的代码实现，它需要更加全面，要能够处理很多用例，涉及到封装，优化等。 Sinatra会把env这个hash打包到一个方便的对象里面，以request对象的形式供你的代码使用。同样的，response可用于生成body数组。它们都能很轻易地在程序中被调用，看看例子3-13具体怎么做的。</p>
+
+<p><sub>Example 3-13. 使用 env, request, 和 response</sub></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;sinatra&#39;</span>
+
+<span class="n">helpers</span> <span class="k">do</span>
+  <span class="k">def</span> <span class="nf">assert</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span>
+    <span class="nb">fail</span> <span class="s2">&quot;something is terribly broken&quot;</span> <span class="k">unless</span> <span class="n">condition</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">get</span> <span class="s1">&#39;/&#39;</span> <span class="k">do</span>
+  <span class="n">assert</span> <span class="n">env</span><span class="o">[</span><span class="s1">&#39;PATH_INFO&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="n">request</span><span class="o">.</span><span class="n">path_info</span>
+
+  <span class="n">final_result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">finish</span>
+  <span class="n">assert</span> <span class="nb">Array</span> <span class="o">===</span> <span class="n">final_result</span>
+  <span class="n">assert</span> <span class="n">final_result</span><span class="o">.</span><span class="n">length</span> <span class="o">==</span> <span class="mi">3</span>
+  <span class="n">assert</span> <span class="n">final_result</span><span class="o">.</span><span class="n">first</span> <span class="o">==</span> <span class="mi">200</span>
+
+  <span class="s2">&quot;everything is fine&quot;</span>
+<span class="k">end</span></code></pre></figure>
+
+<h1 id="rack-it-up">Rack It Up</h1>
+
+<p>如果你再到IRB，输入<code>Sinatra::Application.new.class</code>，你会发现这个<code>new</code>不会返回一个Sinatra::Application对象，而是一个Rack::MethodOverride对象。</p>
+
+<p>Rack支持在你的程序之前设置chaining filters和chaining routers。用Rack的术语来说，就叫middleware。middleware同样遵循Rack的规范，有<code>call</code>方法并且返回一个上面刚刚提过的数组。它并不是简单的自己生成一个数组，而是调用不同的终端或者middleware的<code>call</code>方法。现在这个middleware可以修改request（env hash），也可以修改response，然后在判断是否调用另一个终端或者一系列终端。Sinatra返回Rack::MethodOverride对象而不是Sinatra::Application对象从而保持在这个middleware chaining中。</p>
+
+<h3 id="middleware">Middleware</h3>
+
+<p>Rack对于middleware还有额外的规范。middleware由一个<a href="https://en.wikipedia.org/wiki/Factory_(object-oriented_programming)" title="wiki factory">factory</a>对象创建。这个对象实现了<code>new</code>方法；<code>new</code>方法接受至少一个参数，那就是将会被这个middleware打包的终端。最后middleware返回这个打包好的终端。</p>
+
+<p>通常情况下，factory就是一个class，比如Sinatra::ShowException，而这个class的实例就是一个拥有一个固定终端的完整的middleware。我们先把Sinatra放一边，再写一个简单的Rack程序。我们可以用一个<code>Proc</code>来代替Sinatra，因为它有<code>call</code>方法。我们也会简单写一个middleware来检查路径是否正确。</p>
+
+<p>你的系统应该已经安装了rack这个gem，因为Sinatra依赖这个gem。这个gem包涵一个很好用的工具叫<code>rackup</code>，它可以简单的运行一个Rack程序。创建一个文件名叫“config.ru”，输入例子3-14中的内容。之后，你只需要在这个文件夹下运行<code>rackup -p 4567 -s thin</code>，就可以在“http://localhost:4567/”看到你的程序了。</p>
+
+<p><sub>Example 3-14. config.ru 的内容</sub></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="no">MyApp</span> <span class="o">=</span> <span class="nb">proc</span> <span class="k">do</span> <span class="o">|</span><span class="n">env</span><span class="o">|</span>
+  <span class="o">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">},</span> <span class="o">[</span><span class="s1">&#39;ok&#39;</span><span class="o">]]</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">MyMiddleware</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+    <span class="vi">@app</span> <span class="o">=</span> <span class="n">app</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">env</span><span class="o">[</span><span class="s1">&#39;PATH_INFO&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;/&#39;</span>
+      <span class="vi">@app</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="k">else</span>
+      <span class="o">[</span><span class="mi">404</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">},</span> <span class="o">[</span><span class="s1">&#39;not ok&#39;</span><span class="o">]]</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1"># this is the actual configuration</span>
+<span class="n">use</span> <span class="no">MyMiddleware</span>
+<span class="n">run</span> <span class="no">MyApp</span></code></pre></figure>
+
+<h3 id="sinatra--middleware">Sinatra 和 Middleware</h3>
+
+<p>Rack里的<code>use</code>很好用，所以Sinatra也实现了这个方法，用法和Rack完全一下。看看例子3-15是怎么用的。</p>
+
+<p><sub>Example 3-15. Using use in Sinatra</sub></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">require <span class="s1">&#39;sinatra&#39;</span>
+require <span class="s1">&#39;rack&#39;</span>
+
+<span class="c"># A handy middleware that ships with Rack</span>
+<span class="c"># and sets the X-Runtime header</span>
+use Rack::Runtime
+
+get<span class="o">(</span><span class="s1">&#39;/&#39;</span><span class="o">)</span> <span class="o">{</span> <span class="s1">&#39;Hello world!&#39;</span> <span class="o">}</span></code></pre></figure>
+
+<p>这些看起来很厉害，但是对我们有什么用呢？这样，你就可以把Sinatra程序用做middleware了啊。</p>
+
+<p>Sinatra::Application这个类就是factory，可以创建配置完整的middleware实例，也就是你的程序实例。当有request进来时，所有的<code>before</code>过滤器就会先执行一遍, 如果没有route符合，就把这个request传递给打包好的终端程序。在route处理完或者终端程序处理完之后，<code>after</code>过滤器就会被执行一遍。因此，这个Sinatra程序就是一个Rack的middleware。</p>
+
+<blockquote>
+  <p>补充</p>
+
+  <p>这一章较难理解，可以参考一下Rack相关知识。也可以在<a href="http://webapps-for-beginners.rubymonstas.org/rack.html" title="Webapps For Beginners">这里</a>找一些简单易懂的补充。</p>
+</blockquote>
+
+	<p> (END) </p>
+        <ul class="pager">
+          
+          <li class="previous">
+            <a href="/%E6%8A%80%E6%9C%AF/2016/04/06/peek-behind-the-curtain-2/" data-toggle="tooltip" data-placement="top" title="Sinatra 实现原理(二)">&larr; Previous Post</a>
+          </li>
+           
+          <li class="next">
+            <a href="/%E6%8A%80%E6%9C%AF/2016/04/08/dup-vs-clone/" data-toggle="tooltip" data-placement="top" title="dup 和 clone 的区别">Next Post &rarr;</a>
+          </li>
+          
+        </ul>
+        <hr>
+        <div id="disqus_thread"></div>
+      </div>
+
+    </div>
+  </div>
+</article>
+<hr>
+
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    // Required: on line below, replace text in quotes with your forum shortname
+    var disqus_shortname = 'hanfuspace';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://twitter.com/lhf_leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://www.facebook.com/lhf.leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://github.com/lhf-leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <p class="copyright text-muted">Copyright &copy; Liao Hanfu's Blog 2016</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/custom.js "></script>
+
+
+</body>
+
+</html>

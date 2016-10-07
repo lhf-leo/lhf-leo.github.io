@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="I Leo, I learn and I love.">
+
+    <title>Sinatra 实现原理补充 - Liao Hanfu's Blog</title>
+    <link rel="icon" type="image/ico" href="/img/favicon.ico" />
+
+    <link rel="canonical" href="http://hanfu.space/%E6%8A%80%E6%9C%AF/2016/04/08/peek-behind-the-curtain-summary/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+
+<body>
+    <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-5MK7Q6"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5MK7Q6');</script>
+<!-- End Google Tag Manager -->
+    
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header page-scroll">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Liao Hanfu's Blog</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="/about/">about</a>
+        </li>
+        <li>
+          <a href="/contact/">contact</a>
+        </li>
+      </ul>
+    </div>
+    <!-- /.navbar-collapse -->
+  </div>
+  <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<header class="intro-header" style="background-image: url('/img/home-bg.jpg')">
+  <div class="graylayer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+          <div class="post-heading">
+            <h1>Sinatra 实现原理补充</h1> 
+            <h2 class="subheading">Ruby 高级概念</h2> 
+            <span class="post-tag">
+              About 技术
+              
+                  in
+                  
+                      <span class="tag"> &bull;  Sinatra</span>
+                  
+              
+            </span>
+            <span class="meta">Posted by Liao Hanfu's Blog on April 8, 2016</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Post Content -->
+<article>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p>这一系列文章讲解十分深入，有很多概念我不得不回头去查阅，从中也学到了不少。在这篇文章，我会就文章中出现的难懂的概念，做出一些补充。</p>
+
+<!--more-->
+
+<h1 id="unboundmethod">UnboundMethod</h1>
+
+<p>Ruby 支持两种对象化了的方法：Bound 和 Unbound。 Bound方法是指和一个特定对象绑定起来的方法对象。 
+Unbound方法自然就是没有被绑定的嘛。╮（￣▽￣）╭ 
+Unbound方法可以通过<code>instance_method</code>来创建，或者令bound方法<code>unbind</code>。</p>
+
+<p>Unbound方法只能在绑定后才能被调用，而且必须绑定在一个 和这个方法被解绑下来的类（对象）的实例 上（只要这个实例是<code>kind_of?</code>这个类就行）。</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Square</span>
+  <span class="k">def</span> <span class="nf">area</span>
+    <span class="vi">@side</span> <span class="o">*</span> <span class="vi">@side</span>
+  <span class="k">end</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">side</span><span class="p">)</span>
+    <span class="vi">@side</span> <span class="o">=</span> <span class="n">side</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">area_un</span> <span class="o">=</span> <span class="no">Square</span><span class="o">.</span><span class="n">instance_method</span><span class="p">(</span><span class="ss">:area</span><span class="p">)</span>
+
+<span class="n">s</span> <span class="o">=</span> <span class="no">Square</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">area_un</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">call</span>  <span class="c1">#=&gt; 144</span></code></pre></figure>
+
+<p>Sinatra里面大概就是这样用的，当路径不同时，绑定不同的方法在get，post上面。</p>
+
+<h1 id="class--self">class « self</h1>
+
+<p>这段代码在Sinatra源码里面有，高端又神秘。其实就是用来为<code>self</code>写一些singleton方法。我们首先不要管self，当作一个不同的object好了，看用法：</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">a</span> <span class="o">=</span> <span class="s1">&#39;foo&#39;</span>
+<span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="n">a</span>
+  <span class="k">def</span> <span class="nf">inspect</span>
+    <span class="s1">&#39;&quot;bar&quot;&#39;</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+<span class="n">a</span><span class="o">.</span><span class="n">inspect</span>   <span class="c1"># =&gt; &quot;bar&quot;</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="s1">&#39;foo&#39;</span>   <span class="c1"># new object, new singleton class</span>
+<span class="n">a</span><span class="o">.</span><span class="n">inspect</span>   <span class="c1"># =&gt; &quot;foo&quot;</span></code></pre></figure>
+
+<p>所以<code>class &lt;&lt; self</code>也就不难理解了：</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">String</span>
+  <span class="k">class</span> <span class="o">&lt;&lt;</span> <span class="nb">self</span>
+    <span class="k">def</span> <span class="nf">value_of</span> <span class="n">obj</span>
+      <span class="n">obj</span><span class="o">.</span><span class="n">to_s</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="nb">String</span><span class="o">.</span><span class="n">value_of</span> <span class="mi">42</span>   <span class="c1"># =&gt; &quot;42&quot;</span></code></pre></figure>
+
+<p>和下面两种方式是一样的：</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">String</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">value_of</span> <span class="n">obj</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">to_s</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>或者：</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nc">String</span><span class="o">.</span><span class="nf">value_of</span> <span class="n">obj</span>
+  <span class="n">obj</span><span class="o">.</span><span class="n">to_s</span>
+<span class="k">end</span></code></pre></figure>
+
+<h1 id="rack">Rack</h1>
+
+<p>Rack在Ruby的世界里面是一种构建服务端的最基本，但也是非常有意思的方式。 而且理解Rack也是理解Sinatra的基础，毕竟Sinatra是在Rack的基础上写出来的。 我们可以只用Rack搭建一个简单的后端程序。 直接上实例，代码保存到<code>config.ru</code>，然后在该文件夹下执行<code>rackup</code>，默认会在<code> http://localhost:9292</code>下显示。 非常建议好好研究一下这段代码，对于理解Sinatra和整个Ruby环境都非常有帮助。</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">Application</span>
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">handle_request</span><span class="p">(</span><span class="n">env</span><span class="o">[</span><span class="s1">&#39;REQUEST_METHOD&#39;</span><span class="o">]</span><span class="p">,</span> <span class="n">env</span><span class="o">[</span><span class="s1">&#39;REQUEST_PATH&#39;</span><span class="o">]</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+    <span class="k">def</span> <span class="nf">handle_request</span><span class="p">(</span><span class="nb">method</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+      <span class="k">if</span> <span class="nb">method</span> <span class="o">==</span> <span class="s2">&quot;GET&quot;</span>
+        <span class="n">get</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+      <span class="k">else</span>
+        <span class="n">method_not_allowed</span><span class="p">(</span><span class="nb">method</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+      <span class="o">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span> <span class="s2">&quot;Content-Type&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;text/html&quot;</span> <span class="p">},</span> <span class="o">[</span><span class="s2">&quot;You have requested the path </span><span class="si">#{</span><span class="n">path</span><span class="si">}</span><span class="s2">, using GET&quot;</span><span class="o">]]</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">method_not_allowed</span><span class="p">(</span><span class="nb">method</span><span class="p">)</span>
+      <span class="o">[</span><span class="mi">405</span><span class="p">,</span> <span class="p">{},</span> <span class="o">[</span><span class="s2">&quot;Method not allowed: </span><span class="si">#{</span><span class="nb">method</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">]]</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">run</span> <span class="no">Application</span><span class="o">.</span><span class="n">new</span></code></pre></figure>
+
+	<p> (END) </p>
+        <ul class="pager">
+          
+          <li class="previous">
+            <a href="/%E6%8A%80%E6%9C%AF/2016/04/08/peek-behind-the-curtain-4/" data-toggle="tooltip" data-placement="top" title="Sinatra 实现原理(四)">&larr; Previous Post</a>
+          </li>
+           
+          <li class="next">
+            <a href="/%E7%94%9F%E6%B4%BB/2016/07/14/what-you-want-is-wrong/" data-toggle="tooltip" data-placement="top" title="你想要什么">Next Post &rarr;</a>
+          </li>
+          
+        </ul>
+        <hr>
+        <div id="disqus_thread"></div>
+      </div>
+
+    </div>
+  </div>
+</article>
+<hr>
+
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    // Required: on line below, replace text in quotes with your forum shortname
+    var disqus_shortname = 'hanfuspace';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://twitter.com/lhf_leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://www.facebook.com/lhf.leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://github.com/lhf-leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <p class="copyright text-muted">Copyright &copy; Liao Hanfu's Blog 2016</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/custom.js "></script>
+
+
+</body>
+
+</html>

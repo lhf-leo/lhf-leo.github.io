@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="I Leo, I learn and I love.">
+
+    <title>在 AWS 上搭建 Jekyll 博客 - Liao Hanfu's Blog</title>
+    <link rel="icon" type="image/ico" href="/img/favicon.ico" />
+
+    <link rel="canonical" href="http://hanfu.space/%E6%8A%80%E6%9C%AF/2015/10/28/put-jekyll-blog-to-aws/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+
+<body>
+    <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-5MK7Q6"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5MK7Q6');</script>
+<!-- End Google Tag Manager -->
+    
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header page-scroll">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Liao Hanfu's Blog</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="/about/">about</a>
+        </li>
+        <li>
+          <a href="/contact/">contact</a>
+        </li>
+      </ul>
+    </div>
+    <!-- /.navbar-collapse -->
+  </div>
+  <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<header class="intro-header" style="background-image: url('/img/home-bg.jpg')">
+  <div class="graylayer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+          <div class="post-heading">
+            <h1>在 AWS 上搭建 Jekyll 博客</h1> 
+            <h2 class="subheading">利用 Github Post Receive Hook 同步</h2> 
+            <span class="post-tag">
+              About 技术
+              
+                  in
+                  
+                      <span class="tag"> &bull;  Jekyll</span>
+                  
+                      <span class="tag"> &bull;  AWS</span>
+                  
+              
+            </span>
+            <span class="meta">Posted by Liao Hanfu's Blog on October 28, 2015</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Post Content -->
+<article>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p>Jekyll是一个为生成静态博客非常快速且优雅的工具, <a href="http://jekyllrb.com/" title="jekyll">官方网站</a>资料详实, 有需要可以去学习一下, 本文会涉及它的基本应用, 但不会深入讨论日常用法. AWS是一个Amazon推出的强大的云服务, 可以被用作VPS. 本文主要讨论如何通过 Github Post Receive 实现本地与 AWS EC2 实例自动同步. 你需要确保已安装git和jekyll在你的机器上. 
+<!--more--></p>
+
+<h2 id="section">创建博客</h2>
+
+<p>在想要存放博客的地方:</p>
+
+<pre><code>jekyll new myblog
+</code></pre>
+
+<p>这样就创建了一个基本博客的文件系统, 其中生成了初始页面. 现在可以进入文件夹运行博客:</p>
+
+<pre><code>cd myblog
+jekyll serve
+</code></pre>
+
+<p>现在可以通过访问<code>http://localhost:4000</code>, 查看博客.</p>
+
+<p>然后在博客文件夹里面新建一个git仓库:</p>
+
+<pre><code>git init
+git add .
+git commit -m 'My new blog!'
+</code></pre>
+
+<h2 id="aws-ec2">配置AWS EC2</h2>
+<p>除了AWS, 还有很多优秀的VPS提供商. 如果使用的是其他VPS可以跳过<em>申请开通</em>, 其余的根据系统相应调整.</p>
+
+<h4 id="section-1">申请开通</h4>
+<p>创建一个AWS帐号, 按照默认设置初始化一个EC2实例. 我选择的是系统是Ubuntu, 因为比较熟悉. 不用多久, 将会获得一个Pem文件, 需要妥善保管, 这是登陆实例的唯一凭证. 还可以通过管理面板找到该实例的IP地址. 现在就可以通过SSH连接:</p>
+
+<pre><code>ssh -i younameit.pem ubuntu@xxx.xxx.xxx.xxx
+</code></pre>
+
+<h4 id="apache">配置Apache</h4>
+<p><code>AWS默认只打开了ssh的22接口, 所以需要首先在AWS的控制面板中开放80接口.</code></p>
+
+<p>安装过程:</p>
+
+<pre><code>sudo apt-get update
+sudo apt-get install tasksel
+sudo tasksel install lamp-server
+</code></pre>
+
+<p>这个时候访问你的公共IP就已經可以看到Apache的示例页面了. Apache默认的网站页面位置在<code>/var/www</code>, 在里面创建一个目录供博客网站使用:</p>
+
+<pre><code>mkdir /var/www/mybog
+</code></pre>
+
+<p><code>如果之后出现该文件夹权限不足的问题, 可以通过`sudo chmod -R 755 /var/www/myblog`解决.(感觉不是最好的办法, 但我水平不够, 望指教)</code></p>
+
+<p>现在要把Apache默认位置改到新建的文件夹上, 在默认配置的基础下创建自己的配置:</p>
+
+<pre><code>sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/myblog.conf
+sudo vim /etc/apache2/sites-available/myblog.conf
+</code></pre>
+
+<p>现在把<code>/var/www</code>改为<code>/var/www/myblog</code>. 为测试可以先放一个<code>index.html</code>在myblog文件夹, 更换配置文件, 重启服务:</p>
+
+<pre><code>sudo a2dissite 000-default &amp;&amp; sudo a2ensite mysite
+sudo service apache2 reload
+</code></pre>
+
+<p>这时, 通过访问IP或者DNS看到刚刚放进去的<code>index.html</code>了.</p>
+
+<h4 id="bare">新建BARE仓库</h4>
+<p>什么是bare仓库, 看<a href="http://git-scm.com/book/en/v2/Git-on-the-Server-Getting-Git-on-a-Server" title="git-pro">这里</a>. 此时在VPS里面:</p>
+
+<pre><code>cd ~/
+mkdir myblog.git &amp;&amp; cd myblog.git
+git init --bare
+</code></pre>
+
+<h4 id="post-receive-hook">创建Post-receive Hook</h4>
+<p>接下来需要做的是创建Hook. 每次<code>push</code>到远程仓库时, Git都会执行一个叫作post-receive的shell脚本, 这里需要创建它:</p>
+
+<pre><code>cd hooks
+touch post-receive
+nano post-receive
+</code></pre>
+
+<p>这时可以把以下脚本复制进来. <code>GIT_REPO</code>是刚刚创建的bare仓库, <code>TMP_GIT_CLONE</code>是临时放置clone下来的博客源码的地方, 在这里build代码后复制到大部分服务器默认的根目录<code>/var/www/myblog</code>, <code>PUBLIC_WWW</code>是最终网站代码的位置:</p>
+
+<pre><code>#!/bin/bash -l
+GIT_REPO=$HOME/myblog.git
+TMP_GIT_CLONE=$HOME/tmp/git/myblog
+PUBLIC_WWW=/var/www/myblog
+
+git clone $GIT_REPO $TMP_GIT_CLONE
+jekyll build --source $TMP_GIT_CLONE --destination $PUBLIC_WWW
+rm -Rf $TMP_GIT_CLONE
+exit
+</code></pre>
+
+<p>有的地方建议修改添加文件可执行权限, 按需执行:</p>
+
+<pre><code>chmod +x post-receive
+</code></pre>
+
+<h4 id="remote">本地连接Remote</h4>
+<p>回到本地, 添加刚刚创建的bare远程仓库到remote, 为了方便命名为origin, 可以按需修改:</p>
+
+<pre><code>git remote add origin ubuntu@[IP 或 DNS]:~/myblog.git
+</code></pre>
+
+<p>为了能够连接到AWS, 你需要把AWS给的证书写到本地安全钥里, 可以把<code>dsa</code>换成<code>rsa</code>:</p>
+
+<pre><code>cat ~/.ssh/id_dsa.pub | ssh -i amazon-generated-key.pem ec2-user@amazon-instance-public-dns "cat &gt;&gt; .ssh/authorized_keys"
+</code></pre>
+
+<p>现在应该就可以<code>push</code>到AWS上了:</p>
+
+<pre><code>git push origin master
+</code></pre>
+
+<h2 id="tips">Tips</h2>
+<p>附加讲讲我在搭建这个环境是碰到的问题, 如果你已经顺利push并被自动build, 可以忽略这一节.</p>
+
+<ol>
+  <li>
+    <p>如果出现不能识别gist liquid, 需要在AWS中安装jekyll-gist gem, 并在jekyll配置文件里注明.
+ gems: [jekyll-gist]</p>
+  </li>
+  <li>
+    <p>如果highlighter使用的是pygments, 需要在AWS中安装pygment.rb gem, 这个gem名字的后缀让我刚开始转了很多弯. 还要确保系统中安装了pygments:
+ sudo apt-get install python-pygments</p>
+  </li>
+  <li>
+    <p>注意Git分支!(这条是写给我自己看的, 可以忽略) 我之前用Github Page存管博客. 为了使用其他插件(Github只支持少量插件), 我采取的方法是将本地编译之后的代码上传到remote的master(Github 默认显示master). 使得我在本地的默认分支不是master, 而是我放置源代码的source分支. 当我在本地不小心使用了<code>git checkout</code>之后, 自己彻底凌乱了…</p>
+  </li>
+</ol>
+
+	<p> (END) </p>
+        <ul class="pager">
+          
+          <li class="previous">
+            <a href="/%E6%8A%80%E6%9C%AF/2015/10/27/git-tutorial-3/" data-toggle="tooltip" data-placement="top" title="Git 初学者(三)">&larr; Previous Post</a>
+          </li>
+           
+          <li class="next">
+            <a href="/%E6%8A%80%E6%9C%AF/2015/11/01/peek-behind-the-curtain/" data-toggle="tooltip" data-placement="top" title="Sinatra 实现原理(一)">Next Post &rarr;</a>
+          </li>
+          
+        </ul>
+        <hr>
+        <div id="disqus_thread"></div>
+      </div>
+
+    </div>
+  </div>
+</article>
+<hr>
+
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    // Required: on line below, replace text in quotes with your forum shortname
+    var disqus_shortname = 'hanfuspace';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://twitter.com/lhf_leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://www.facebook.com/lhf.leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://github.com/lhf-leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <p class="copyright text-muted">Copyright &copy; Liao Hanfu's Blog 2016</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/custom.js "></script>
+
+
+</body>
+
+</html>

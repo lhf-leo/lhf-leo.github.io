@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="I Leo, I learn and I love.">
+
+    <title>Sinatra 实现原理(一) - Liao Hanfu's Blog</title>
+    <link rel="icon" type="image/ico" href="/img/favicon.ico" />
+
+    <link rel="canonical" href="http://hanfu.space/learning/2015/11/01/peek-behind-the-curtain/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+
+<body>
+    <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-5MK7Q6"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5MK7Q6');</script>
+<!-- End Google Tag Manager -->
+    
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header page-scroll">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Liao Hanfu's Blog</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="/about/">about</a>
+        </li>
+        <li>
+          <a href="/contact/">contact</a>
+        </li>
+      </ul>
+    </div>
+    <!-- /.navbar-collapse -->
+  </div>
+  <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<header class="intro-header" style="background-image: url('/img/home-bg.jpg')">
+  <div class="graylayer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+          <div class="post-heading">
+            <h1>Sinatra 实现原理(一)</h1> 
+            <h2 class="subheading">Application 和 Delegation</h2> 
+            <span class="post-tag">
+              About Learning
+              
+                  in
+                  
+                      <span class="tag"> &bull;  翻译</span>
+                  
+                      <span class="tag"> &bull;  Sinatra</span>
+                  
+              
+            </span>
+            <span class="meta">Posted by Liao Hanfu's Blog on November 1, 2015</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Post Content -->
+<article>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p>翻译来自 <em>Sinatra: Up and Running</em>。</p>
+
+<p><code>在阅读这个专题之前，你应该已经对Sinatra的classic用法风格比较熟悉了。</code>现在我们更加深入地探讨一下Sinatra是如何运行的。一旦你了解其后台的原理，那么，充分利用可用的API甚至是拓展它就变得非常容易了。为了达到这个目标，我们会研究Sinatra的源代码，看看到底发生了什么。
+<!--more--></p>
+
+<blockquote>
+  <p>提示</p>
+
+  <p>Sinatra遵循语义化版本规则，即它一直向下兼容除非主版本升级（版本的第一个数字变大）。因此，在Sinatra 1.2.3下写的程序，也可以运行在1.3.0的版本中。语义化版本控制要求一个官方且全面的API使用规范，在Sinatra里就是README，你可以在<a href="http://www.sinatrarb.com/intro" title="README">这里</a>找到。 你可以在<a href="http://semver.org/" title="Semantic Versioning">这里</a>了解更多有关语义化版本。</p>
+</blockquote>
+
+<h1 id="application--delegation">Application 与 Delegation</h1>
+
+<p>让我们从一个小实验开始。我们应该已经知道网页的参数是通过一个叫params的哈希表传递给routes，并被routes使用。简单的例子就是登录表单一般都会有params[:username] 和 params[:password]。</p>
+
+<p>我们定义的各种routes（get ‘/home’，post ‘/login’， 等等）并不是一个函数定义，而是调用了更深层次的Sinatra函数。这些routes的做法，是以block或者叫closure的形式传递给Sinatra去处理和执行。</p>
+
+<p>这样的话，检查这个block被执行的上下文将非常有趣。Ruby里的Block应该与其被定义的作用域具有相同的函数与变量。那么，例子3-1的输出会是什么呢？</p>
+
+<p><sub>Example 3-1. 检查params作用域的脚本</sub></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>irb
+ruby-1.9.2-p0 &gt; require <span class="s1">&#39;sinatra&#39;</span>
+<span class="o">=</span>&gt; <span class="nb">true </span>
+ruby-1.9.2-p0 &gt; get<span class="o">(</span><span class="s1">&#39;/&#39;</span><span class="o">)</span> <span class="o">{</span> defined? params <span class="o">}</span>
+<span class="o">=</span>&gt; <span class="o">[</span>/^<span class="se">\/</span><span class="nv">$/</span>, <span class="o">[]</span>, <span class="o">[]</span>, <span class="c">#&gt;Proc:0x00000100aff310@/sinatra-1.2.6/lib/sinatra/base.rb:1152&gt;] </span>
+ruby-1.9.2-p0 &gt; defined? <span class="nv">params</span>
+<span class="o">=</span>&gt; nil</code></pre></figure>
+
+<p>如上所示，params只是在get里面才可见。这也揭示了Sinatra运作的秘密就是它处理self变量的方式。</p>
+
+<h3 id="self">内部的Self</h3>
+
+<p>在Ruby里，没被赋给变量或常量的函数调用，都传给了self。一般来说为了简洁，self都被隐藏了。在例子3-2中，我们调用jobs和self.jobs；输出相同是因为这些调用发生在用一个作用域里面，因而self也是相同的。</p>
+
+<p><sub>Example 3-2. 展示self的一种用法</sub></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>irb
+ruby-1.9.2-p0 &gt; <span class="nb">jobs</span>
+<span class="o">=</span>&gt; <span class="c">#0-&gt;irb on main (#&lt;Thread:0x00000100887678&gt;: running) </span>
+ruby-1.9.2-p0 &gt; self.jobs
+<span class="o">=</span>&gt; <span class="c">#0-&gt;irb on main (#&lt;Thread:0x00000100887678&gt;: running)</span></code></pre></figure>
+
+<p>当要通过scope gates的时候，self的唯一性就变得非常重要了；scope gates是指在执行代码中，作用域发生改变的代码片段，往往self也会相应改变。在Ruby里，定义类，定义模块和函数都是scope gates。</p>
+
+<p>例子3-3展示了如何得到self从Sinatra routes内部和外部检测的结果；在Figure3-1可以看到结果。</p>
+
+<p><sub>Example 3-3. 检测不同作用域下的self</sub></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">require <span class="s2">&quot;sinatra&quot;</span>
+
+<span class="nv">outer_self</span> <span class="o">=</span> self
+get <span class="s1">&#39;/&#39;</span> <span class="k">do</span>
+  content_type :txt
+  <span class="s2">&quot;outer self: #{outer_self}, inner self: #{self}&quot;</span>
+end</code></pre></figure>
+
+<blockquote>
+  <p>提示</p>
+
+  <p>技术上讲，Rubu里的closures会开辟一个新的嵌套的作用域，我们以后再讲。</p>
+</blockquote>
+
+<p><img src="/img/peek-3-1.png" alt="result" />
+<sup>Figure 3-1. 检查不同作用域下的self</sup></p>
+
+<p>例子3-3告诉我们，routes里面的函数调用实际上都传给了一个Sinatra::Application类的实例。更进一步，如果你刷新那个页面，你会发现object id一直在变化，这说明对于每一个request请求都有不同的实例来处理。</p>
+
+<blockquote>
+  <p>提示</p>
+
+  <p>同样值得注意的是外部作用域是main，前面在调用jobs和self.jobs时也一样。</p>
+</blockquote>
+
+<h3 id="get">“get”是哪来的?</h3>
+
+<p>现在我们知道routes是把block传递给一个Sinatra::Application的实例处理。那么，route方法到底在哪里实现的呢？我们打开IRB，用Ruby reflection API来大致了解一下例子3-4中展示的类的结构。</p>
+
+<p><sub>Example 3-4. 使用 reflection</sub></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>~<span class="o">]</span><span class="nv">$ </span>irb
+ruby-1.9.2-p180 &gt; require <span class="s1">&#39;sinatra&#39;</span>
+<span class="o">=</span>&gt; <span class="nb">true</span>
+ruby-1.9.2-p180 &gt; Sinatra::Application.superclass
+<span class="o">=</span>&gt; Sinatra::Base
+ruby-1.9.2-p180 &gt; Sinatra::Base.superclass
+<span class="o">=</span>&gt; Object
+ruby-1.9.2-p180 &gt; method<span class="o">(</span>:get<span class="o">)</span>
+<span class="o">=</span>&gt; <span class="c">#&lt;Method: Object(Sinatra::Delegator)#get&gt;</span>
+ruby-1.9.2-p180 &gt; Sinatra::Delegator.methods<span class="o">(</span><span class="nb">false</span><span class="o">)</span>
+<span class="o">=</span>&gt; <span class="o">[</span>:delegate, :target, :target<span class="o">=]</span>
+ruby-1.9.2-p180 &gt; Sinatra::Delegator.target
+<span class="o">=</span>&gt; Sinatra::Application
+ruby-1.9.2-p180 &gt; Sinatra::Application.method<span class="o">(</span>:get<span class="o">)</span>
+<span class="o">=</span>&gt; <span class="c">#&lt;Method: Sinatra::Application(Sinatra::Base).get&gt;</span>
+ruby-1.9.2-p180 &gt; _.source_location
+<span class="o">=</span>&gt; <span class="o">[</span><span class="s2">&quot;~/gems/sinatra-1.3.0/lib/sinatra/base.rb&quot;</span>, 1069<span class="o">]</span></code></pre></figure>
+
+<p>有趣的是，像get，post这类的方法实际上被定义了两次。一次是在Sinatra::Delegator，这是一个mixin extending Object。因此这些方法在程序的所有地方都可以使用。这个delegator mixin会直接把同样的函数调用传递给Sinatra::Application，Sinatra::Application从Sinatra::Base继承了这些方法。</p>
+
+<blockquote>
+  <p>提示</p>
+
+  <p>Mixins是Ruby从Common Lisp继承的一种技术，这种技术能让你除了选择一个父类以外，还可以加入一些其他的像类一样的的对象到继承链里面。这就让你能够继承现存的类和对象，而不会意外重写其他函数。</p>
+</blockquote>
+
+<p>我们再深入研究一下Sinatra::Base和Sinatra::Application。例子3-5展示了如何在不用DSL的情况下正确定义routes，以及如果我们在错误的模块下定义routes会发生什么。</p>
+
+<p><sub>Example 3-5. 继续使用 reflection</sub></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>~<span class="o">]</span><span class="nv">$ </span>irb
+ruby-1.9.2-p180 &gt; require <span class="s1">&#39;sinatra/base&#39;</span>
+<span class="o">=</span>&gt; <span class="nb">true</span>
+ruby-1.9.2-p180 &gt; get<span class="o">(</span><span class="s1">&#39;/&#39;</span><span class="o">)</span> <span class="o">{</span> <span class="s1">&#39;hi&#39;</span> <span class="o">}</span>
+NoMethodError: undefined method <span class="sb">`</span>get<span class="s1">&#39; for main:Object</span>
+<span class="s1">  from (irb):3</span>
+<span class="s1">ruby-1.9.2-p180 &gt; Sinatra::Application.get(&#39;</span>/<span class="s1">&#39;) { &#39;</span>hi<span class="err">&#39;</span> <span class="o">}</span>
+<span class="o">=</span>&gt; <span class="o">[]</span>
+ruby-1.9.2-p180 &gt; Sinatra::Application.run!
+<span class="o">==</span> Sinatra/1.3.0 has taken the stage on <span class="m">4567</span> <span class="k">for</span> development with backup from Thin
+&gt;&gt; Thin web server <span class="o">(</span>v1.2.11 codename Bat-Shit Crazy<span class="o">)</span>
+&gt;&gt; Maximum connections <span class="nb">set </span>to 1024
+&gt;&gt; Listening on 0.0.0.0:4567, CTRL+C to stop</code></pre></figure>
+
+<h3 id="section">探索实现方法</h3>
+
+<p><code>书上前面内容在介绍了使用顶级DSL的classic风格Sinatra，如果有必要你可以简单从官方文档学习，本文不再赘述。这里讲的是modular style。</code><br />
+Sinatra也可以在不用顶级DSL的情况下使用，只需要sinatra/base和一点mixin结构的知识。也意味着顶级DSL不是必须的。</p>
+
+<p>例子3-4和3-5说明了在base.rb里包含对get方法的定义（这个文件也是Sinatra的核心）。在该文件的后面，你可以找到Application和Delegator的实现代码。它们的实现非常简单。而所有Sinatra的主要功能都是在Base类中实现的。</p>
+
+<blockquote>
+  <p>提示</p>
+
+  <p>base.rb现在的开发版本可以在<a href="https://github.com/sinatra/sinatra/blob/master/lib/sinatra/base.rb" title="sinatra code">这里</a>找到。</p>
+</blockquote>
+
+
+	<p> (END) </p>
+        <ul class="pager">
+          
+          <li class="previous">
+            <a href="/learning/2015/10/28/put-jekyll-blog-to-aws/" data-toggle="tooltip" data-placement="top" title="在 AWS 上搭建 Jekyll 博客">&larr; Previous Post</a>
+          </li>
+           
+          <li class="next">
+            <a href="/%E8%BD%AF%E4%BB%B6/2015/11/15/change-os/" data-toggle="tooltip" data-placement="top" title="在CentOS上安装Nvidia驱动以及KDE4桌面">Next Post &rarr;</a>
+          </li>
+          
+        </ul>
+        <hr>
+        <div id="disqus_thread"></div>
+      </div>
+
+    </div>
+  </div>
+</article>
+<hr>
+
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    // Required: on line below, replace text in quotes with your forum shortname
+    var disqus_shortname = 'hanfuspace';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://twitter.com/lhf_leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://www.facebook.com/lhf.leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://github.com/lhf-leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <p class="copyright text-muted">Copyright &copy; Liao Hanfu's Blog 2015</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/custom.js "></script>
+
+
+</body>
+
+</html>

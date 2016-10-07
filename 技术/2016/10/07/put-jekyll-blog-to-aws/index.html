@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="I Leo, I learn and I love.">
+
+    <title>用Slack显示CodeDeploy状态 - Liao Hanfu's Blog</title>
+    <link rel="icon" type="image/ico" href="/img/favicon.ico" />
+
+    <link rel="canonical" href="http://hanfu.space/%E6%8A%80%E6%9C%AF/2016/10/07/put-jekyll-blog-to-aws/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+
+<body>
+    <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-5MK7Q6"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5MK7Q6');</script>
+<!-- End Google Tag Manager -->
+    
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header page-scroll">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Liao Hanfu's Blog</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="/about/">about</a>
+        </li>
+        <li>
+          <a href="/contact/">contact</a>
+        </li>
+      </ul>
+    </div>
+    <!-- /.navbar-collapse -->
+  </div>
+  <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<header class="intro-header" style="background-image: url('/img/home-bg.jpg')">
+  <div class="graylayer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+          <div class="post-heading">
+            <h1>用Slack显示CodeDeploy状态</h1> 
+            <h2 class="subheading">珍爱生命，远离手动</h2> 
+            <span class="post-tag">
+              About 技术
+              
+                  in
+                  
+                      <span class="tag"> &bull;  DevOps</span>
+                  
+                      <span class="tag"> &bull;  AWS</span>
+                  
+              
+            </span>
+            <span class="meta">Posted by Liao Hanfu's Blog on October 7, 2016</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Post Content -->
+<article>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p>Slack是目前很多人工作中必不可少的通讯工具；CodeDeploy是AWS上方便部署代码的有力助手。每次部署代码时，你是否苦恼在运维组的频道中重复同样的话？现在结合这两个工具，当CodeDeploy状态发生变化时，让Slack自动发送消息。
+<!--more--></p>
+
+<h2 id="slack">设置Slack</h2>
+
+<p>首先到Manage找到Custom Integrations，创建Incoming WebHooks。一般来说，你可以直接访问<code>https://your-domin-name-goes-here.slack.com/services/new</code>。根据提示简单设置之后，你就会获得一个Webhook URL，之后会用到。Slack就设置好了。</p>
+
+<h2 id="lambda">创建Lambda</h2>
+
+<p>这里Lambda指的是AWS里面的Lambda Function：</p>
+
+<blockquote>
+  <p>AWS Lambda runs your code on a high-availability compute infrastructure and performs all the administration of the compute resources, including server and operating system maintenance, capacity provisioning and automatic scaling, code and security patch deployment, and code monitoring and logging. All you need to do is supply your Node.js code.</p>
+</blockquote>
+
+<p>在AWS中找到Lambda Function模块，创建时<code>Code template</code>选None。粘贴下面这段代码，<code>注意用你自己的webhook url</code>。这是Node.js，你可以根据你的需要，很简单的修改消息的样式和内容。</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">https</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;https&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;util&#39;</span><span class="p">);</span>
+
+<span class="nx">exports</span><span class="p">.</span><span class="nx">handler</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;From SNS:&#39;</span><span class="p">,</span> <span class="nx">event</span><span class="p">.</span><span class="nx">Records</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">Sns</span><span class="p">.</span><span class="nx">Message</span><span class="p">);</span>
+
+    <span class="kd">var</span> <span class="nx">postData</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="nx">event</span><span class="p">.</span><span class="nx">Records</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">Sns</span><span class="p">.</span><span class="nx">Subject</span> <span class="o">+</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span>
+    <span class="p">};</span>
+
+    <span class="kd">var</span> <span class="nx">message</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">Records</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">Sns</span><span class="p">.</span><span class="nx">Message</span><span class="p">;</span>
+
+    <span class="c1">//path换上你自己的webhook url</span>
+    <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">method</span><span class="o">:</span> <span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+        <span class="nx">hostname</span><span class="o">:</span> <span class="s1">&#39;hooks.slack.com&#39;</span><span class="p">,</span>
+        <span class="nx">port</span><span class="o">:</span> <span class="mi">443</span><span class="p">,</span>
+        <span class="nx">path</span><span class="o">:</span> <span class="s1">&#39;/services/your-slack-webhook-url-info-goes-here&#39;</span>
+    <span class="p">};</span>
+
+    <span class="kd">var</span> <span class="nx">req</span> <span class="o">=</span> <span class="nx">https</span><span class="p">.</span><span class="nx">request</span><span class="p">(</span><span class="nx">options</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">res</span><span class="p">.</span><span class="nx">setEncoding</span><span class="p">(</span><span class="s1">&#39;utf8&#39;</span><span class="p">);</span>
+      <span class="nx">res</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">chunk</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">context</span><span class="p">.</span><span class="nx">done</span><span class="p">(</span><span class="kc">null</span><span class="p">);</span>
+      <span class="p">});</span>
+    <span class="p">});</span>
+    
+    <span class="nx">req</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;problem with request: &#39;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span>
+    <span class="p">});</span>    
+
+    <span class="nx">req</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">util</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="s2">&quot;%j&quot;</span><span class="p">,</span> <span class="nx">postData</span><span class="p">));</span>
+    <span class="nx">req</span><span class="p">.</span><span class="nx">end</span><span class="p">();</span>
+<span class="p">};</span></code></pre></figure>
+
+<p>然后就可以测试了。在Sample Event里面，粘贴下面简单的SNS信息：</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="p">{</span>
+    <span class="s2">&quot;Records&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;EventSource&quot;</span><span class="o">:</span> <span class="s2">&quot;aws:sns&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;EventVersion&quot;</span><span class="o">:</span> <span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;EventSubscriptionArn&quot;</span><span class="o">:</span> <span class="s2">&quot;arn:aws:sns:us-east-1:963529778735:deployment-notice:1b5f9fec-1628-4124-8caf-eb1d68c7c8dc&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Sns&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="s2">&quot;Type&quot;</span><span class="o">:</span> <span class="s2">&quot;Notification&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;MessageId&quot;</span><span class="o">:</span> <span class="s2">&quot;fc94858f-129b-546f-83c6-d5feec49dbdb&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;TopicArn&quot;</span><span class="o">:</span> <span class="s2">&quot;arn:aws:sns:us-east-1:963529778735:deployment-notice&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Subject&quot;</span><span class="o">:</span> <span class="s2">&quot;CREATED: AWS CodeDeploy d-OJSFEI0CI in us-east-1 to Portal&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Message&quot;</span><span class="o">:</span> <span class="s2">&quot;{\&quot;region\&quot;:\&quot;us-east-1\&quot;,\&quot;accountId\&quot;:\&quot;963529778735\&quot;,\&quot;eventTriggerName\&quot;:\&quot;Deployment Status Update\&quot;,\&quot;applicationName\&quot;:\&quot;Portal\&quot;,\&quot;deploymentId\&quot;:\&quot;d-OJSFEI0CI\&quot;,\&quot;deploymentGroupName\&quot;:\&quot;Acceptance\&quot;,\&quot;createTime\&quot;:\&quot;Fri Oct 07 19:50:41 UTC 2016\&quot;,\&quot;completeTime\&quot;:null,\&quot;status\&quot;:\&quot;CREATED\&quot;}&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Timestamp&quot;</span><span class="o">:</span> <span class="s2">&quot;2016-10-07T19:50:42.170Z&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;SignatureVersion&quot;</span><span class="o">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Signature&quot;</span><span class="o">:</span> <span class="s2">&quot;TQCHNq0NrX5ldDTF11gBRz95HWkcCJ5fKOvKmv0klGB9A4rC5g1B4Ydv8Z8+DVJO4UszsiDcxnOQ9yHkkaNUZJZ9jLrEtoPtFINokZTJFVkM1kvhqYyOA2ex5zzv/Vs52EwO9aG80NPIS0b8haEHRYMh52DVn4J05QrzwiiHbit67d75ZvEWMCJKWJewGP9nPY4RwnJJnlalyCtmkubNaAJmhiNcqsTg/6TqgMsBXfYxvBVICzmNCtuQrbVRoXTDoCgtwx2G9mQnmM1VgH37MBBibMmc2D/EJpDg+sUico/KEG/s9x1BixDk5Xc6teUPc78kgfJ3enPUjbYEuQwBgQ==&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;SigningCertUrl&quot;</span><span class="o">:</span> <span class="s2">&quot;https://sns.us-east-1.amazonaws.com/SimpleNotificationService-b95095beb82e8f6a046b3aafc7f4149a.pem&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;UnsubscribeUrl&quot;</span><span class="o">:</span> <span class="s2">&quot;https://sns.us-east-1.amazonaws.com/?Action=Unsubscribe&amp;SubscriptionArn=arn:aws:sns:us-east-1:963529778735:deployment-notice:1b5f9fec-1628-4124-8caf-eb1d68c7c8dc&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;MessageAttributes&quot;</span><span class="o">:</span> <span class="p">{}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>点测试就可以在Slack里面看到消息了。</p>
+
+<h2 id="simple-notification-service">Simple Notification Service</h2>
+
+<p>在AWS中找到SNS，新建一个Topic。然后设置这个Topic，创建一个subscription。协议选aws lambda，这个时候你就可以看到你刚刚创建的那个lambda了。这样，只要有消息传到SNS，它就会自动执行这个lambda。</p>
+
+<h2 id="codedeploy">CodeDeploy</h2>
+
+<p>找到你的Deployment Group，创建trigger练到SNS中你刚刚创建的Topic就行了。这里我碰到了一个权限问题，解决方式在这篇文章里面：<a href="http://docs.aws.amazon.com/codedeploy/latest/userguide/how-to-sns-service-role-permission.html">Grant Amazon SNS Permissions to an AWS CodeDeploy Service Role</a></p>
+
+<h2 id="section">最后</h2>
+
+<p><code>rake deploy:development</code>…搞定！酷不酷？</p>
+
+	<p> (END) </p>
+        <ul class="pager">
+          
+          <li class="previous">
+            <a href="/%E6%8A%80%E6%9C%AF/2016/07/15/ruby-class-and-module/" data-toggle="tooltip" data-placement="top" title="Ruby的Class, Modules, Extend, Include, Mixins...">&larr; Previous Post</a>
+          </li>
+           
+        </ul>
+        <hr>
+        <div id="disqus_thread"></div>
+      </div>
+
+    </div>
+  </div>
+</article>
+<hr>
+
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    // Required: on line below, replace text in quotes with your forum shortname
+    var disqus_shortname = 'hanfuspace';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://twitter.com/lhf_leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://www.facebook.com/lhf.leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://github.com/lhf-leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <p class="copyright text-muted">Copyright &copy; Liao Hanfu's Blog 2016</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/custom.js "></script>
+
+
+</body>
+
+</html>

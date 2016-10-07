@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="I Leo, I learn and I love.">
+
+    <title>在CentOS上安装Nvidia驱动以及KDE4桌面 - Liao Hanfu's Blog</title>
+    <link rel="icon" type="image/ico" href="/img/favicon.ico" />
+
+    <link rel="canonical" href="http://hanfu.space/%E5%B7%A5%E5%85%B7/2015/11/15/change-os/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+
+<body>
+    <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-5MK7Q6"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5MK7Q6');</script>
+<!-- End Google Tag Manager -->
+    
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header page-scroll">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Liao Hanfu's Blog</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="/about/">about</a>
+        </li>
+        <li>
+          <a href="/contact/">contact</a>
+        </li>
+      </ul>
+    </div>
+    <!-- /.navbar-collapse -->
+  </div>
+  <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<header class="intro-header" style="background-image: url('/img/home-bg.jpg')">
+  <div class="graylayer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+          <div class="post-heading">
+            <h1>在CentOS上安装Nvidia驱动以及KDE4桌面</h1> 
+            <h2 class="subheading">Linux 新的开始，Ubuntu 14.04 转到 CentOS 7</h2> 
+            <span class="post-tag">
+              About 工具
+              
+                  in
+                  
+                      <span class="tag"> &bull;  操作系统</span>
+                  
+                      <span class="tag"> &bull;  搭建环境</span>
+                  
+              
+            </span>
+            <span class="meta">Posted by Liao Hanfu's Blog on November 15, 2015</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Post Content -->
+<article>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p>一方面因为自己对linux的理解不够到位，一方面Ubuntu本身存在不少神秘的小bug，终于在初秋的一个美丽的早晨，在我的电脑上运行了一年的ubuntu14.04LTS因为升级内核过程中可能的不当操作，顺利看到了某个著名播客的标题“内核恐慌”（kernel panic）。无力挽回，只好用liveCD挽回重要数据，弃船逃生。
+<!--more--></p>
+
+<p>经过这次惨痛的教训，决定在易用性和稳定性的trade-off中，稍稍向稳定性倾斜。于是在openSUSE leap 42，centOS或fedora，gentoo中，经过两天的试用，最终考虑决定使用CentOS 7搭配KDE4。在这次搭建中，主要有以下几个问题：</p>
+
+<h2 id="nvidia">安装Nvidia驱动</h2>
+
+<p>为了方便我在CentOS mininal installation之后首先安装了Nvidia的驱动。</p>
+
+<h4 id="section">1. 下载驱动</h4>
+
+<p>去<a href="http://www.nvidia.com/Download/index.aspx">Nvidia官方网站</a>，下载与显卡相对应的版本，类似于<code>NVIDIA-Linux-x86_64-352.30.run</code>。</p>
+
+<h4 id="section-1">2. 更新系统与编译工具</h4>
+
+<p>驱动安装之前非常重要的一点就是更新内核版本，因为可能比repositories里面的要旧，这样编译时就会产生冲突，这绝对不是你想应付的场面。</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>yum update
+<span class="nv">$ </span>yum install kernel-devel-<span class="k">$(</span>uname -r<span class="k">)</span> gcc
+<span class="nv">$ </span>reboot</code></pre></figure>
+
+<h4 id="nouveau">3. 拉黑Nouveau驱动（禁止启动）</h4>
+<p>Nouveau驱动是默认安装的，如果不禁止或删除将会与接下来要安装的驱动冲突。</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"> 
+<span class="nv">$ </span><span class="nb">echo</span> <span class="s1">&#39;blacklist nouveau&#39;</span> &gt;&gt; /etc/modprobe.d/blacklist.conf
+<span class="nv">$ </span>dracut /boot/initramfs-<span class="k">$(</span>uname -r<span class="k">)</span>.img <span class="k">$(</span>uname -r<span class="k">)</span> --force
+<span class="c"># 如果已经安装了GUI这里需要多加一步关闭桌面：systemctl disable gdm</span>
+<span class="nv">$ </span>reboot </code></pre></figure>
+
+<h4 id="section-2">4. 安装</h4>
+<p>直接bash执行下载下来的文件：</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>bash NVIDIA-Linux-x86_64-352.30.run</code></pre></figure>
+
+<p>到这里驱动就装好了，如果在安装过程中没有配置X11，加下面这句：</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>nvidia-xconfig</code></pre></figure>
+
+<p>特别提醒64位的用户一定要安装32位兼容库，很多地方都要用到，如果没装会报出<code>segmentation fault</code>的bug。顺便提一下，如果在安装steam时<code>gtk-query-immodules-2xxxx</code>报出<code>segmentation fault</code>的bug，安装后打不开，那么解决方式就是安装驱动的32位兼容，推荐使用EIRepo（其实这个repo可以直接安装kmod-nvidia驱动，但是我想用官方提供的版本就没有用）去<a href="http://elrepo.org/tiki/tiki-index.php">EIRepo网站</a>查看具体添加方法：</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+<span class="nv">$ </span>rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm
+<span class="nv">$ </span>yum remove xorg-x11-glamor
+<span class="nv">$ </span>yum install nvidia-x11-drv-32bit
+＃ 如果用这个库安装驱动：yum install kmod-nvidia</code></pre></figure>
+
+<p>如果已经安装了GUI，这是可以打开桌面了。</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>systemctl <span class="nb">enable </span>gdm
+<span class="nv">$ </span>reboot</code></pre></figure>
+
+<h2 id="kde4">安装KDE4</h2>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>yum -y groups install <span class="s2">&quot;KDE Plasma Workspaces&quot;</span> 
+<span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;exec startkde&quot;</span> &gt;&gt; ~/.xinitrc
+<span class="nv">$ </span>startx</code></pre></figure>
+
+<p>登陆界面启用KDE桌面：</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">systemctl <span class="nb">set</span>-default graphical.target</code></pre></figure>
+
+<h2 id="section-3">安装各种软件</h2>
+
+<p>和Ubuntu比起来，包括驱动，无论安装哪个软件都更加麻烦，但是比较可信的，应该不是心理作用的，是系统运行更加流畅，而且没有出现过莫名其妙的小错误。这一点，从Windows98一直到Windows10，加上Ubuntu14.04甚至OSX8到10，在一路跌跌撞撞中，尤为感觉温暖。</p>
+
+	<p> (END) </p>
+        <ul class="pager">
+          
+          <li class="previous">
+            <a href="/%E6%8A%80%E6%9C%AF/2015/11/01/peek-behind-the-curtain/" data-toggle="tooltip" data-placement="top" title="Sinatra 实现原理(一)">&larr; Previous Post</a>
+          </li>
+           
+          <li class="next">
+            <a href="/%E5%B7%A5%E5%85%B7/2015/11/17/use-sublime/" data-toggle="tooltip" data-placement="top" title="Sublime 使用手册">Next Post &rarr;</a>
+          </li>
+          
+        </ul>
+        <hr>
+        <div id="disqus_thread"></div>
+      </div>
+
+    </div>
+  </div>
+</article>
+<hr>
+
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    // Required: on line below, replace text in quotes with your forum shortname
+    var disqus_shortname = 'hanfuspace';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://twitter.com/lhf_leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://www.facebook.com/lhf.leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://github.com/lhf-leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <p class="copyright text-muted">Copyright &copy; Liao Hanfu's Blog 2016</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/custom.js "></script>
+
+
+</body>
+
+</html>

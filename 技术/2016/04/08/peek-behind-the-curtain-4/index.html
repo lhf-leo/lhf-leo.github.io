@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="I Leo, I learn and I love.">
+
+    <title>Sinatra 实现原理(四) - Liao Hanfu's Blog</title>
+    <link rel="icon" type="image/ico" href="/img/favicon.ico" />
+
+    <link rel="canonical" href="http://hanfu.space/%E6%8A%80%E6%9C%AF/2016/04/08/peek-behind-the-curtain-4/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+
+<body>
+    <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-5MK7Q6"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5MK7Q6');</script>
+<!-- End Google Tag Manager -->
+    
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header page-scroll">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Liao Hanfu's Blog</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="/about/">about</a>
+        </li>
+        <li>
+          <a href="/contact/">contact</a>
+        </li>
+      </ul>
+    </div>
+    <!-- /.navbar-collapse -->
+  </div>
+  <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<header class="intro-header" style="background-image: url('/img/home-bg.jpg')">
+  <div class="graylayer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+          <div class="post-heading">
+            <h1>Sinatra 实现原理(四)</h1> 
+            <h2 class="subheading">Dispatching</h2> 
+            <span class="post-tag">
+              About 技术
+              
+                  in
+                  
+                      <span class="tag"> &bull;  翻译</span>
+                  
+                      <span class="tag"> &bull;  Sinatra</span>
+                  
+              
+            </span>
+            <span class="meta">Posted by Liao Hanfu's Blog on April 8, 2016</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Post Content -->
+<article>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p>翻译来自 <em>Sinatra: Up and Running</em></p>
+
+<p><code>这一段暂时超出我的翻译能力，为了完整性先把英文版的给大家看。（需要翻译的同学请尽量留言让我知道是否有必要）</code></p>
+
+<!--more-->
+
+<h1 id="dispatching">Dispatching</h1>
+
+<p>There is, however, one catch: Sinatra relies on the “one instance per request” principle. However, when running as middleware, all requests will use the same instance over and over again. Sinatra performs a clever trick here: instead of executing the logic right away, it duplicates the current instance and hands responsibility on to the duplicate instead. Since instance creation (especially with all the middleware being set up internally) is not free from a performance and resources standpoint, it uses that trick for all requests (even if running as endpoint) by keeping a prototype object around.</p>
+
+<p>Example 3-16 shows the secret sauce in Sinatra’s dispatch activities.</p>
+
+<p><sub>Example 3-16. The Sinatra dispatch in action</sub></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">module</span> <span class="nn">MySinatra</span>
+  <span class="k">class</span> <span class="nc">Base</span>
+    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">prototype</span>
+      <span class="vi">@prototype</span> <span class="o">||=</span> <span class="kp">new</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+      <span class="n">prototype</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+      <span class="nb">dup</span><span class="o">.</span><span class="n">call!</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">def</span> <span class="nf">call!</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+      <span class="o">[</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">},</span>
+        <span class="o">[</span><span class="s1">&#39;routing logic not implemented&#39;</span><span class="o">]]</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">class</span> <span class="nc">Application</span> <span class="o">&lt;</span> <span class="no">Base</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<h3 id="dispatching-redux">Dispatching Redux</h3>
+
+<p>This lets us craft some pretty interesting Sinatra applications. This prototype and instance duplication approach means you can safely use call on the current instance and consume the result of another route. If you remember from the earlier discussion on Rack’s methodology, the call method will return an array. The application in Example 3-17 lets you check the status code and headers of other routes. Figure 3-5 shows the output of the inspector application.</p>
+
+<p><sub>Example 3-17. A reflective route inspector</sub></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;sinatra&#39;</span>
+
+<span class="n">get</span> <span class="s1">&#39;/example&#39;</span> <span class="k">do</span>
+  <span class="s1">&#39;go to /inspect/example&#39;</span>
+<span class="k">end</span>
+
+<span class="n">get</span> <span class="s1">&#39;/inspect/*&#39;</span> <span class="k">do</span>
+  <span class="n">route</span>  <span class="o">=</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">params</span><span class="o">[</span><span class="ss">:splat</span><span class="o">].</span><span class="n">first</span>
+  <span class="n">data</span>  <span class="o">=</span> <span class="n">call</span> <span class="n">env</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="s2">&quot;PATH_INFO&quot;</span> <span class="o">=&gt;</span> <span class="n">route</span><span class="p">)</span>
+  <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;Status: </span><span class="si">#{</span><span class="n">data</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+  <span class="n">data</span><span class="o">[</span><span class="mi">1</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">header</span><span class="p">,</span> <span class="n">value</span><span class="o">|</span>
+    <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">header</span><span class="si">}</span><span class="s2">: </span><span class="si">#{</span><span class="n">value</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+  <span class="k">end</span>
+
+  <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+  <span class="n">data</span><span class="o">[</span><span class="mi">2</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">line</span><span class="o">|</span>
+    <span class="n">result</span> <span class="o">&lt;&lt;</span> <span class="n">line</span>
+  <span class="k">end</span>
+
+  <span class="n">content_type</span> <span class="ss">:txt</span>
+  <span class="n">result</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>Now let’s tie everything together with the code in Example 3-18 and create a Sinatra application that acts as middleware.</p>
+
+<p><sub>Example 3-18. Using Sinatra as middleware in a fictional Rails project</sub></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;./sinatra_middleware&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;./config/environment&#39;</span>
+
+<span class="n">use</span> <span class="no">Sinatra</span><span class="o">::</span><span class="no">Application</span>
+<span class="n">run</span> <span class="no">MyRailsProject</span><span class="o">::</span><span class="no">Application</span></code></pre></figure>
+
+<p><img src="/img/peek-3-5.png" alt="img" />
+<sup>Figure 3-5. Firing another request internally to inspect the response</sup></p>
+
+<h3 id="changing-bindings">Changing Bindings</h3>
+
+<p>To bring the discussion back to where we began, let’s focus on a block passed to get again. How is it that the instance methods are actually available? If you’ve been working with Ruby for a decent length of time, you’ve probably come across instance_eval, which allows you to dynamically change the binding of a block. Example 3-19 demonstrates how this can be used.</p>
+
+<p><sub>Example 3-19. Toying with instance_eval</sub></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="err">$</span> <span class="n">irb</span>
+<span class="n">ruby</span><span class="o">-</span><span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">2</span><span class="o">-</span><span class="n">p180</span> <span class="o">&gt;</span> <span class="n">array</span> <span class="o">=</span> <span class="o">[</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="o">]</span>
+<span class="o">=&gt;</span> <span class="o">[</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="o">]</span>
+<span class="n">ruby</span><span class="o">-</span><span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">2</span><span class="o">-</span><span class="n">p180</span> <span class="o">&gt;</span> <span class="n">block</span> <span class="o">=</span> <span class="nb">proc</span> <span class="p">{</span> <span class="n">first</span> <span class="p">}</span>
+<span class="o">=&gt;</span> <span class="c1">#&lt;Proc:0x00000101017c58@(irb):2&gt;</span>
+<span class="n">ruby</span><span class="o">-</span><span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">2</span><span class="o">-</span><span class="n">p180</span> <span class="o">&gt;</span> <span class="n">block</span><span class="o">.</span><span class="n">call</span>
+<span class="ss">NameError</span><span class="p">:</span> <span class="n">undefined</span> <span class="n">local</span> <span class="n">variable</span> <span class="ow">or</span> <span class="nb">method</span> <span class="sb">`first&#39; for main:Object</span>
+<span class="sb">  from (irb):2:in `</span><span class="n">block</span> <span class="k">in</span> <span class="n">irb_binding</span><span class="s1">&#39;</span>
+<span class="s1">  from (irb):3:in `call&#39;</span>
+  <span class="n">from</span> <span class="p">(</span><span class="n">irb</span><span class="p">):</span><span class="mi">3</span>
+  <span class="n">from</span> <span class="sr">/Users/</span><span class="n">konstantin</span><span class="o">/.</span><span class="n">rvm</span><span class="o">/</span><span class="n">rubies</span><span class="o">/</span><span class="n">ruby</span><span class="o">-</span><span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">2</span><span class="o">-</span><span class="n">p180</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="ss">irb</span><span class="p">:</span><span class="mi">16</span><span class="ss">:in</span> <span class="sb">`&lt;main&gt;&#39;</span>
+<span class="sb">ruby-1.9.2-p180 &gt; array.instance_eval(&amp;block)</span>
+<span class="sb">=&gt; &quot;foo&quot;</span></code></pre></figure>
+
+<p>This is similar to what Sinatra does. In fact, earlier versions of Sinatra do use instance_eval. However, there is an alternative: dynamically create a method from that block, get the unbound method object for that method, and remove the method immediately. When you want to run the code, bind the method object to the current instance and call it.</p>
+
+<p>This has a few advantages over instance_eval: it results in significantly better performance since the scope change only occurs once as opposed to every request. It also allows the passing of arguments to the block. Moreover, since you can name the method yourself, it results in more readable stack traces. All of this logic is wrapped in Sinatra’s generate_method, which you can examine in Figure 3-6 and Example 3-20.</p>
+
+<blockquote>
+  <p>Caution</p>
+
+  <p>generate_method is used internally by Sinatra and is not part of the public API. You should not use it directly in your application.</p>
+</blockquote>
+
+<p><img src="/img/peek-3-6.png" alt="img" />
+<sup>Figure 3-6. generate_method and its usage in Sinatra</sup></p>
+
+<p><sub>Example 3-20. generate_method from sinatra/base.rb</sub></p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">generate_method</span><span class="p">(</span><span class="n">method_name</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+  <span class="n">define_method</span><span class="p">(</span><span class="n">method_name</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+  <span class="nb">method</span> <span class="o">=</span> <span class="nb">instance_method</span> <span class="n">method_name</span>
+  <span class="n">remove_method</span> <span class="n">method_name</span>
+  <span class="nb">method</span>
+<span class="k">end</span></code></pre></figure>
+
+
+	<p> (END) </p>
+        <ul class="pager">
+          
+          <li class="previous">
+            <a href="/%E6%8A%80%E6%9C%AF/2016/04/08/dup-vs-clone/" data-toggle="tooltip" data-placement="top" title="dup 和 clone 的区别">&larr; Previous Post</a>
+          </li>
+           
+          <li class="next">
+            <a href="/%E6%8A%80%E6%9C%AF/2016/04/08/peek-behind-the-curtain-summary/" data-toggle="tooltip" data-placement="top" title="Sinatra 实现原理补充">Next Post &rarr;</a>
+          </li>
+          
+        </ul>
+        <hr>
+        <div id="disqus_thread"></div>
+      </div>
+
+    </div>
+  </div>
+</article>
+<hr>
+
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    // Required: on line below, replace text in quotes with your forum shortname
+    var disqus_shortname = 'hanfuspace';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://twitter.com/lhf_leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://www.facebook.com/lhf.leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://github.com/lhf-leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <p class="copyright text-muted">Copyright &copy; Liao Hanfu's Blog 2016</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/custom.js "></script>
+
+
+</body>
+
+</html>

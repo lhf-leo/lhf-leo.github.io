@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="I Leo, I learn and I love.">
+
+    <title>Less Hypothesis - Liao Hanfu's Blog</title>
+    <link rel="icon" type="image/ico" href="/img/favicon.ico" />
+
+    <link rel="canonical" href="http://hanfu.space/categories/Learning/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+
+<body>
+    <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-5MK7Q6"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5MK7Q6');</script>
+<!-- End Google Tag Manager -->
+    
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header page-scroll">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Liao Hanfu's Blog</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="/about/">about</a>
+        </li>
+        <li>
+          <a href="/contact/">contact</a>
+        </li>
+      </ul>
+    </div>
+    <!-- /.navbar-collapse -->
+  </div>
+  <!-- /.container -->
+</nav>
+
+
+    <!-- Page Header -->
+<header class="intro-header" style="background-image: url('/img/home-bg.jpg')">
+    <div class="graylayer">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="site-heading">
+                    <h1>Less Hypothesis</h1>
+                    <hr class="small">
+                    <span class="subheading">Has anything you've done made your life better?</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="container">
+	<div class="row">
+		<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+			<div class="category-notice"> 
+  <label for="category-sel">Category:</label>
+  <select class="form-control" id="category-sel">
+    <option value="all">All</option>
+    
+    <option value="其他" >其他</option>
+    
+    <option value="生活" >生活</option>
+    
+    <option value="Learning" selected="selected">Learning</option>
+    
+    <option value="软件" >软件</option>
+    
+  </select>
+</div>
+<hr>
+
+
+<div class="post-preview">
+    <a href="/learning/2015/11/01/peek-behind-the-curtain/">
+        <h2 class="post-title">            Sinatra 实现原理(一)
+        </h2>
+        
+        <h3 class="post-subtitle">
+            Application 和 Delegation
+        </h3>
+        
+    </a>
+    
+    <p class="post-excerpt">翻译来自 <em>Sinatra: Up and Running</em>。
+
+<code>在阅读这个专题之前，你应该已经对Sinatra的classic用法风格比较熟悉了。</code>现在我们更加深入地探讨一下Sinatra是如何运行的。一旦你了解其后台的原理，那么，充分利用可用的API甚至是拓展它就变得非常容易了。为了达到这个目标，我们会研究Sinatra的源代码，看看到底发生了什么。
+
+</p>
+    
+    <p class="post-meta">Posted by <b>Liao Hanfu's Blog</b> on November 1, 2015</p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/learning/2015/10/28/put-jekyll-blog-to-aws/">
+        <h2 class="post-title">            在 AWS 上搭建 Jekyll 博客
+        </h2>
+        
+        <h3 class="post-subtitle">
+            利用 Github Post Receive Hook 同步
+        </h3>
+        
+    </a>
+    
+    <p class="post-excerpt">Jekyll是一个为生成静态博客非常快速且优雅的工具, <a href="http://jekyllrb.com/" title="jekyll">官方网站</a>资料详实, 有需要可以去学习一下, 本文会涉及它的基本应用, 但不会深入讨论日常用法. AWS是一个Amazon推出的强大的云服务, 可以被用作VPS. 本文主要讨论如何通过 Github Post Receive 实现本地与 AWS EC2 实例自动同步. 你需要确保已安装git和jekyll在你的机器上.
+
+</p>
+    
+    <p class="post-meta">Posted by <b>Liao Hanfu's Blog</b> on October 28, 2015</p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/learning/2015/10/27/git-tutorial-3/">
+        <h2 class="post-title">            Git 初学者(三)
+        </h2>
+        
+        <h3 class="post-subtitle">
+            Git 远程操作
+        </h3>
+        
+    </a>
+    
+    <p class="post-excerpt">本文大量参考了 阮一峰 的 <a href="http://www.ruanyifeng.com/blog/2014/06/git_remote.html">Git远程操作详解</a> 。
+
+相比前文 <a href="http://hanfu.space/learning/2015/08/26/git-tutorial/">Git基本用法</a> 提到的本地操作，远程操作仅仅多出一个工作区域，即远程仓库（Remote）。
+
+</p>
+    
+    <p class="post-meta">Posted by <b>Liao Hanfu's Blog</b> on October 27, 2015</p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/learning/2015/10/26/git-tutorial-2/">
+        <h2 class="post-title">            Git 初学者(二)
+        </h2>
+        
+        <h3 class="post-subtitle">
+            Git 分支
+        </h3>
+        
+    </a>
+    
+    <p class="post-excerpt">出于实用的考虑，本文略过 Git 实现分支的原理， 仅讨论日常用法。如有兴趣可以参考 <a href="https://git-scm.com/book/zh/v2/Git-%E5%88%86%E6%94%AF-%E5%88%86%E6%94%AF%E7%AE%80%E4%BB%8B">Pro Git</a> 的描述。
+
+</p>
+    
+    <p class="post-meta">Posted by <b>Liao Hanfu's Blog</b> on October 26, 2015</p>
+</div>
+<hr>
+
+<div class="post-preview">
+    <a href="/learning/2015/08/26/git-tutorial/">
+        <h2 class="post-title">            Git 初学者(一)
+        </h2>
+        
+        <h3 class="post-subtitle">
+            Git 基础与基本用法
+        </h3>
+        
+    </a>
+    
+    <p class="post-excerpt">这篇文章要说的是我在工作中需要的git的用法。 如果你稍微理解git的工作原理，这篇文章能够让你理解的更透彻。
+
+</p>
+    
+    <p class="post-meta">Posted by <b>Liao Hanfu's Blog</b> on August 26, 2015</p>
+</div>
+<hr>
+
+
+<!-- Pager -->
+
+
+		</div>
+	</div>
+</div>
+
+<hr>
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://twitter.com/lhf_leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://www.facebook.com/lhf.leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://github.com/lhf-leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <p class="copyright text-muted">Copyright &copy; Liao Hanfu's Blog 2015</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/custom.js "></script>
+
+
+</body>
+
+</html>

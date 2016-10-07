@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="I Leo, I learn and I love.">
+
+    <title>Sublime 使用手册 - Liao Hanfu's Blog</title>
+    <link rel="icon" type="image/ico" href="/img/favicon.ico" />
+
+    <link rel="canonical" href="http://hanfu.space/%E5%B7%A5%E5%85%B7/2015/11/17/use-sublime/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+
+<body>
+    <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-5MK7Q6"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5MK7Q6');</script>
+<!-- End Google Tag Manager -->
+    
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header page-scroll">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Liao Hanfu's Blog</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="/about/">about</a>
+        </li>
+        <li>
+          <a href="/contact/">contact</a>
+        </li>
+      </ul>
+    </div>
+    <!-- /.navbar-collapse -->
+  </div>
+  <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<header class="intro-header" style="background-image: url('/img/home-bg.jpg')">
+  <div class="graylayer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+          <div class="post-heading">
+            <h1>Sublime 使用手册</h1> 
+            <h2 class="subheading">安装，设置与插件</h2> 
+            <span class="post-tag">
+              About 工具
+              
+                  in
+                  
+                      <span class="tag"> &bull;  搭建环境</span>
+                  
+                      <span class="tag"> &bull;  软件</span>
+                  
+              
+            </span>
+            <span class="meta">Posted by Liao Hanfu's Blog on November 17, 2015</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Post Content -->
+<article>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p>使用sublime很长一段时间了，各个方面都令我非常满意。因为这次更换系统，正好把使用方法归纳一下。下面是我在用的图标以供分享：
+<img src="https://raw.githubusercontent.com/YabataDesign/sublime-text-icon/master/Sublime_text_256x256x32.png" alt="afterglow icon" title="afterglow" />
+<!--more-->
+##安装</p>
+
+<p>在Windows，OS X 和 Ubuntu上安装sublime都非常方便，这里主要介绍一下CentOS的安装方法。
+首先，去<a href="http://www.sublimetext.com/3">Sublime网站</a>下载64位或32位<em>tarball</em>，或者直接使用<code>wget</code>命令下载：</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">## On 64bit</span>
+<span class="nv">$ </span>wget http://c758482.r82.cf2.rackcdn.com/sublime_text_3_build_3083_x64.tar.bz2</code></pre></figure>
+
+<p>然后解压到<code>/opt</code>文件夹：</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>sudo tar -vxjf sublime_text_3_build_3083_x64.tar.bz2 -C /opt</code></pre></figure>
+
+<p>建立一个链接到刚刚安装的文件夹：</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>sudo ln -s /opt/sublime_text_3/sublime_text /usr/bin/sublime3</code></pre></figure>
+
+<p>到这里，就可以通过在终端输入<code>sublime3</code>来打开软件了。如果需要让GUI知道它的存在（比如想在KDE中的App Launcher找到），创建desktop文件：</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>sudo sublime3 /usr/share/applications/sublime3.desktop</code></pre></figure>
+
+<p>在该文件中添加下列语句：</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>Desktop Entry<span class="o">]</span>
+<span class="nv">Name</span><span class="o">=</span>Sublime3
+<span class="nv">Exec</span><span class="o">=</span>sublime3
+<span class="nv">Terminal</span><span class="o">=</span><span class="nb">false</span>
+<span class="nv">Icon</span><span class="o">=</span>/opt/sublime_text_3/Icon/48x48/sublime-text.png
+<span class="nv">Type</span><span class="o">=</span>Application
+<span class="nv">Categories</span><span class="o">=</span>TextEditor<span class="p">;</span>IDE<span class="p">;</span>Development
+X-Ayatana-Desktop-Shortcuts<span class="o">=</span>NewWindow
+ 
+<span class="o">[</span>NewWindow Shortcut Group<span class="o">]</span>
+<span class="nv">Name</span><span class="o">=</span>New Window
+<span class="nv">Exec</span><span class="o">=</span>sublime -n
+<span class="nv">TargetEnvironment</span><span class="o">=</span>Unity</code></pre></figure>
+
+<p>这样安装久搞定了。</p>
+
+<h2 id="section">设置</h2>
+
+<p>Sublime 使用 Json 作为配置文件格式，方便修改与迁移，我只需要将原来的配置文件（settings-user）替换掉就行了。下面是我用的配置：</p>
+
+<figure class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
+  <span class="nt">&quot;highlight_line&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="nt">&quot;font_size&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span>
+  <span class="nt">&quot;ignored_packages&quot;</span><span class="p">:</span>
+  <span class="p">[</span>
+    <span class="s2">&quot;Vintage&quot;</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;tab_size&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="nt">&quot;translate_tabs_to_spaces&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span></code></pre></figure>
+
+<h2 id="section-1">插件</h2>
+
+<p>Sublime 最让人倾慕的功能莫过于其强大的插件支持。众多插件几乎可以满足各个方面的工作需要。一般地，推荐使用<code>Package Control</code>安装管理所有插件，安装非常简单。首先在sublime界面中按住<code>Ctrl</code>＋<code>\</code>`打开控制台，输入下列命令（最好去<a href="https://packagecontrol.io/installation">官网</a>根据你的版本复制代码）：</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">urllib.request</span><span class="o">,</span><span class="nn">os</span><span class="o">,</span><span class="nn">hashlib</span><span class="p">;</span> <span class="n">h</span> <span class="o">=</span> <span class="s">&#39;2915d1851351e5ee549c20394736b442&#39;</span> <span class="o">+</span> <span class="s">&#39;8bc59f460fa1548d1514676163dafc88&#39;</span><span class="p">;</span> <span class="n">pf</span> <span class="o">=</span> <span class="s">&#39;Package Control.sublime-package&#39;</span><span class="p">;</span> <span class="n">ipp</span> <span class="o">=</span> <span class="n">sublime</span><span class="o">.</span><span class="n">installed_packages_path</span><span class="p">();</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">install_opener</span><span class="p">(</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">ProxyHandler</span><span class="p">())</span> <span class="p">);</span> <span class="n">by</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span> <span class="s">&#39;http://packagecontrol.io/&#39;</span> <span class="o">+</span> <span class="n">pf</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="s">&#39;%20&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">read</span><span class="p">();</span> <span class="n">dh</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">by</span><span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">();</span> <span class="k">print</span><span class="p">(</span><span class="s">&#39;Error validating download (got </span><span class="si">%s</span><span class="s"> instead of </span><span class="si">%s</span><span class="s">), please try manual install&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dh</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span> <span class="k">if</span> <span class="n">dh</span> <span class="o">!=</span> <span class="n">h</span> <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="n">ipp</span><span class="p">,</span> <span class="n">pf</span><span class="p">),</span> <span class="s">&#39;wb&#39;</span> <span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">by</span><span class="p">)</span></code></pre></figure>
+
+<p>然后重启，就能开始安装一些非常实用的插件了。按住<code>Ctrl</code>＋<code>Shift</code>＋<code>P</code>，输入<code>install</code>选中<code>Install Package</code>，输入或选择你需要的插件回车就安装了（注意左下角的状态栏变化，会提示安装成功）。</p>
+
+<p>一些非常优秀的常用的插件：</p>
+
+<ul>
+  <li>Theme - afterglow</li>
+  <li>HTML-CSS-JS Prettify</li>
+  <li>Alignment</li>
+  <li>ZenCoding</li>
+</ul>
+
+<p>唯一有一些遗憾的是在linux上，sublime无法输入中文（当然也不是没有办法，只是过程繁琐不甚优雅），给一小部分使用场景带来了些许困扰。希望sublime团队能都早日解决这一问题。</p>
+
+
+	<p> (END) </p>
+        <ul class="pager">
+          
+          <li class="previous">
+            <a href="/%E5%B7%A5%E5%85%B7/2015/11/15/change-os/" data-toggle="tooltip" data-placement="top" title="在CentOS上安装Nvidia驱动以及KDE4桌面">&larr; Previous Post</a>
+          </li>
+           
+          <li class="next">
+            <a href="/%E7%94%9F%E6%B4%BB/2015/12/01/after-gre/" data-toggle="tooltip" data-placement="top" title="第一次GRE与第三次黑五">Next Post &rarr;</a>
+          </li>
+          
+        </ul>
+        <hr>
+        <div id="disqus_thread"></div>
+      </div>
+
+    </div>
+  </div>
+</article>
+<hr>
+
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    // Required: on line below, replace text in quotes with your forum shortname
+    var disqus_shortname = 'hanfuspace';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://twitter.com/lhf_leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://www.facebook.com/lhf.leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://github.com/lhf-leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <p class="copyright text-muted">Copyright &copy; Liao Hanfu's Blog 2016</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/custom.js "></script>
+
+
+</body>
+
+</html>

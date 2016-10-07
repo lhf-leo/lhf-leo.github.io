@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="I Leo, I learn and I love.">
+
+    <title>Git 初学者(二) - Liao Hanfu's Blog</title>
+    <link rel="icon" type="image/ico" href="/img/favicon.ico" />
+
+    <link rel="canonical" href="http://hanfu.space/learning/2015/10/26/git-tutorial-2/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/clean-blog.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+
+<body>
+    <!-- Google Tag Manager -->
+<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-5MK7Q6"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5MK7Q6');</script>
+<!-- End Google Tag Manager -->
+    
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header page-scroll">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Liao Hanfu's Blog</a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="/about/">about</a>
+        </li>
+        <li>
+          <a href="/contact/">contact</a>
+        </li>
+      </ul>
+    </div>
+    <!-- /.navbar-collapse -->
+  </div>
+  <!-- /.container -->
+</nav>
+
+
+    <!-- Post Header -->
+<header class="intro-header" style="background-image: url('/img/home-bg.jpg')">
+  <div class="graylayer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+          <div class="post-heading">
+            <h1>Git 初学者(二)</h1> 
+            <h2 class="subheading">Git 分支</h2> 
+            <span class="post-tag">
+              About Learning
+              
+            </span>
+            <span class="meta">Posted by Liao Hanfu's Blog on October 26, 2015</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Post Content -->
+<article>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p>出于实用的考虑，本文略过 Git 实现分支的原理， 仅讨论日常用法。如有兴趣可以参考 <a href="https://git-scm.com/book/zh/v2/Git-%E5%88%86%E6%94%AF-%E5%88%86%E6%94%AF%E7%AE%80%E4%BB%8B">Pro Git</a> 的描述。
+<!--more--></p>
+
+<h2 id="section">创建分支</h2>
+
+<p>如果还记得上篇文章 <a href="http://hanfu.space/learning/2015/08/26/git-tutorial/">Git基础</a> 中提到的指针，那么就会知道，创建分支其实就是创建了一个新的指针。使用的指令是<code>git branch</code>：</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>git branch testing</code></pre></figure>
+
+<p>这会在当前所在的提交对象上创建一个testing指针， 但是此时HEAD指针仍然指向原分支，所以准备在testing分支上工作前，需要切换分支。</p>
+
+<p><img src="https://git-scm.com/book/en/v2/book/03-git-branching/images/head-to-master.png" alt="img" title="head-to-master" /></p>
+
+<h2 id="section-1">切换分支</h2>
+<p>需要使用的指令是<code>git checkout</code>:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>git checkout testing</code></pre></figure>
+
+<p>这样HEAD就指向testing分支了，此时提交代码将会和master分离，产生分叉。</p>
+
+<p><img src="https://git-scm.com/book/en/v2/book/03-git-branching/images/head-to-testing.png" alt="img" title="head-to-testing" /></p>
+
+<p>当然，需要将HEAD切换回master才能在master分支上提交。
+<img src="https://git-scm.com/book/en/v2/book/03-git-branching/images/advance-master.png" alt="img" title="advance-master" /></p>
+
+<p>以上两条命令可以合并成一句，用一个带有<code>-b</code>参数的<code>git checkout</code>命令：</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>git checkout -b testing</code></pre></figure>
+
+<h2 id="section-2">合并分支</h2>
+<p>是时候将分支的代码整合起来，需要用<code>git merge</code>命令合并分支。首先确定需要并入到哪一条分支，通常情况下会需要并入到master，所以先将HEAD切换到master：</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>git checkout master
+Switched to branch <span class="s1">&#39;master&#39;</span>
+<span class="nv">$ </span>git merge iss53
+Merge made by the <span class="s1">&#39;recursive&#39;</span> strategy.
+index.html <span class="p">|</span>    <span class="m">1</span> +
+<span class="m">1</span> file changed, <span class="m">1</span> insertion<span class="o">(</span>+<span class="o">)</span></code></pre></figure>
+
+<p><img src="https://git-scm.com/book/en/v2/book/03-git-branching/images/basic-merging-1.png" alt="img" title="basic-merging-1" /> 
+Git 将此次合并的结果做了一个新的快照并且让master指向它。这里有一个特殊情况就是当master所指的快照是分支的父节点，那么merge操作将会直接移动master指针到分支指针的位置。
+<img src="https://git-scm.com/book/en/v2/book/03-git-branching/images/basic-merging-2.png" alt="img" title="basic-merging-2" /> 
+如果没有任何冲突，那么合并到这里就结束了。但大部分情况，代码往往不能简单的自动合并，比如两个分支均修改了同一个变量。任何因包含合并冲突而有待解决的文件，都会以未合并状态标识出来。Git 会在有冲突的文件中加入标准的冲突解决标记，这样你可以打开这些包含冲突的文件然后手动解决冲突。出现冲突的文件会包含一些特殊区段，看起来像下面这个样子：</p>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="err">&lt;&lt;&lt;&lt;&lt;&lt;</span><span class="nt">&lt; HEAD:index.html</span>
+<span class="err">&lt;</span><span class="na">div</span> <span class="na">id=</span><span class="s">&quot;footer&quot;</span><span class="nt">&gt;</span>contact : email.support@github.com<span class="nt">&lt;/div&gt;</span>
+=======
+<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;footer&quot;</span><span class="nt">&gt;</span>
+ please contact us at support@github.com
+<span class="nt">&lt;/div&gt;</span>
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; iss53:index.html</code></pre></figure>
+
+<p>此时只需要妥善处理冲突,确保已经把 «««&lt; , ======= , 和 »»»&gt; 这些行完全删除。在解决了所有文件里的冲突之后，对每个文件使用 git add 命令来将其标记为冲突已解决。一旦暂存这些原本有冲突的文件，Git 就会将它们标记为冲突已解决。</p>
+
+<p>这就是 Git 分支的基本操作，工作中使用往往需要一定的管理策略，可以参考阮一峰的 <a href="http://www.ruanyifeng.com/blog/2012/07/git.html">Git分支管理策略</a>。</p>
+
+	<p> (END) </p>
+        <ul class="pager">
+          
+          <li class="previous">
+            <a href="/learning/2015/08/26/git-tutorial/" data-toggle="tooltip" data-placement="top" title="Git 初学者(一)">&larr; Previous Post</a>
+          </li>
+           
+          <li class="next">
+            <a href="/learning/2015/10/27/git-tutorial-3/" data-toggle="tooltip" data-placement="top" title="Git 初学者(三)">Next Post &rarr;</a>
+          </li>
+          
+        </ul>
+        <hr>
+        <div id="disqus_thread"></div>
+      </div>
+
+    </div>
+  </div>
+</article>
+<hr>
+
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    // Required: on line below, replace text in quotes with your forum shortname
+    var disqus_shortname = 'hanfuspace';
+    
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="/feed.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://twitter.com/lhf_leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://www.facebook.com/lhf.leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://github.com/lhf-leo">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                </ul>
+                <p class="copyright text-muted">Copyright &copy; Liao Hanfu's Blog 2015</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js "></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/clean-blog.min.js "></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/custom.js "></script>
+
+
+</body>
+
+</html>
